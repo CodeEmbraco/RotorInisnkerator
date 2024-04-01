@@ -54,7 +54,7 @@ export const getOpenOrdersList = () => (dispatch) => {
     // };
     // dispatch(addEvent(startFetchOrders));
     axios
-      .get('http://em10vs0010.embraco.com:8001/api/v1/orders')
+      .get('http://10.13.225.20:8001/api/v1/orders')
       .then((response) => {
         if (response.status === 200) {
           //dispatch(setLoading(false));

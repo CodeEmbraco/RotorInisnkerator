@@ -39,7 +39,7 @@ export const getMetadataFromOrder = (idMaterial) => (dispatch) => {
   // dispatch(addEvent(startFetchOrders));
 
   axios
-    .get(`http://em10vs0010.embraco.com:8001/api/v1/material-metadata?id_material=${idMaterial}`)
+    .get(`http://10.13.225.20:8001/api/v1/material-metadata?id_material=${idMaterial}`)
     .then((response) => {
       if (response.status === 200) {
         //dispatch(setLoading(false));
