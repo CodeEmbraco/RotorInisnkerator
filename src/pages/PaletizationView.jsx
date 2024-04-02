@@ -268,7 +268,7 @@ function PaletizationView() {
   }
 
   function handleNotify() {
-    dispatch(processInSAP(orderSelected, palletSelected, componentsList));
+    dispatch(processInSAP(orderSelected, barcodePallet, value));
   }
 
   function buildTreeData(obj) {
@@ -405,7 +405,7 @@ function PaletizationView() {
                   />
                 </div>
 
-                  {componentsList.length === 0 ? null : isLoading ? (
+                  {value.length == 0 && barcodePallet == "Escanea pallet" ? null : isLoading ? (
                     <button
                       onClick={
                         handleNotify
@@ -433,16 +433,12 @@ function PaletizationView() {
                         //
                       }
                       className={
-                        componentsList.some(
-                          (component) => component.send_to_sap === false
-                        )
+                        value.length > 0 && barcodePallet != "Escanea pallet"
                           ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
                           : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
                       }
                       disabled={
-                        componentsList.some(
-                          (component) => component.send_to_sap === false
-                        )
+                        value.length > 0 && barcodePallet != "Escanea pallet"
                           ? false
                           : true
                       }

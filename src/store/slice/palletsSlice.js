@@ -207,7 +207,7 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
       });
   };
 
-  export const processInSAP = (orderSelected, pallet, components) => (dispatch) => {
+  export const processInSAP = (orderSelected, pallet, n_components) => (dispatch) => {
     dispatch(setLoadingProcessInSap(true));
     const currentDatetime = new Date();
     const currentDate = currentDatetime.toISOString().split('T')[0];
@@ -217,10 +217,10 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
       IArbpl: "MX4FA00P",
       IAufnr: orderSelected.aufnr,
       IMatnrDestino: orderSelected.matnr,
-      ICharg: pallet.identifier,
+      ICharg: pallet,
       IDataProd: currentDate,
       IHoraProd: currentTime,
-      IQuantProd: ItJsonInst.length,
+      IQuantProd: n_components,
       INumin: "G",
       ItJsonInst: null
     };
