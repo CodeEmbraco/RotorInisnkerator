@@ -8,7 +8,7 @@ function BarcodeGeneratorFunction({ value }) {
     JsBarcode(barcodeRef.current, value, {
       format: 'CODE128',
       width: 2,
-      height: 30,
+      height: 70,
       displayValue: false
     });
   }, [value]);

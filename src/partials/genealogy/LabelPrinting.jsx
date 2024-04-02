@@ -32,7 +32,7 @@ const LabelPrinting = forwardRef((props, ref) => {
         <p className="label">Product</p>
        <h2 className="text-lg" >{product}</h2>
        <div className="bar-code">
-                  <BarcodeGeneratorFunction value="X278097301001" />
+                  <BarcodeGeneratorFunction value={product} />
                 </div>
        </div>
        <div>
@@ -68,14 +68,14 @@ const LabelPrinting = forwardRef((props, ref) => {
        </div>
        <div className="flex justify-end">
         <div className="bar-code">
-                  <BarcodeGeneratorFunction value="750" />
+                  <BarcodeGeneratorFunction value={qty} />
                 </div>
        </div>
       <div className="d-flex">
       <p className="label">Batch - Order</p>
-      <h2 className="text-lg" >{pallet}-{order}</h2>
+      <h2 className="text-lg" >{"WET" + pallet + "-" + order} </h2>
       <div>
-                  <BarcodeGeneratorFunction value="A01-1035260<" />
+      <BarcodeGeneratorFunction value={pallet + "-" + order} />
                 </div>
       </div>
       <p className="label text-black">546758 - NGANA {currentDate}</p>
