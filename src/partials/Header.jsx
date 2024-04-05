@@ -22,7 +22,7 @@ function Header({
   const rol = sessionStorage.getItem("rol");
   const openOrdersList = useSelector(selectOpenOrdersList);
 
-  const handleClick = (e) => {
+ const handleClick = (e) => {
     console.log("Open orders list");
     e.stopPropagation();
     dispatch(getOpenOrdersList());

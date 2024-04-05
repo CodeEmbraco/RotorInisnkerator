@@ -45,6 +45,7 @@ import {
   setTestResults,
 } from "../store/slice/testResultSlice";
 import {
+  getLastPallet,
   createPallet,
   selectPallet,
   selectComponents,
@@ -114,7 +115,6 @@ function PaletizationView() {
   const handleSaveMontados = () => {
     setTotalMontadosEditable(false); // Bloquea el input cuando se guarda
   };
-  
 
   const testResultsList = useSelector(selectTestResults);
   const globalStatus = useSelector(selectGlobalStatus);
@@ -124,7 +124,8 @@ function PaletizationView() {
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
 
-  const [barcodePallet, setBarcodePallet] = useState("Escanea pallet");
+  const [barcodePallet, setBarcodePallet] = useState("Nuevo pallet");
+  const [idAuto, setIdAuto] = useState(1);
   const [barcodeProduct, setBarcodeProduct] = useState("Escanea producto");
 
   const [treeData, setTreeData] = useState([]);
@@ -152,26 +153,25 @@ function PaletizationView() {
         handleNew();
         return;
       }
-      
-        // Si la cadena es más corta, considerarla un ID de pallet
-        const codeScannedEvent = {
-          text: "Pallet escaneado: " + code.replace(/Shift/g, "").toUpperCase(),
-          timestamp: new Date().toISOString(),
-        };
-        setBarcodePallet(code.replace(/Shift/g, "").toUpperCase());
-        dispatch(addEventToPaletizationLog(codeScannedEvent));
-        dispatch(createPallet(code.replace(/Shift/g, "").toUpperCase()));
 
-        const createPalletEvent = {
-          text:
-            "Consultando registro de Pallet: " +
-            code.replace(/Shift/g, "").toUpperCase(),
-          timestamp: new Date().toISOString(),
-        };
-        notifyPalletScanned(code.replace(/Shift/g, "").toUpperCase());
+      // Si la cadena es más corta, considerarla un ID de pallet
+      const codeScannedEvent = {
+        text: "Pallet escaneado: " + code.replace(/Shift/g, "").toUpperCase(),
+        timestamp: new Date().toISOString(),
+      };
+      setBarcodePallet(code.replace(/Shift/g, "").toUpperCase());
+      dispatch(addEventToPaletizationLog(codeScannedEvent));
+      dispatch(createPallet(code.replace(/Shift/g, "").toUpperCase()));
 
-        dispatch(addEventToPaletizationLog(createPalletEvent));
-      
+      const createPalletEvent = {
+        text:
+          "Consultando registro de Pallet: " +
+          code.replace(/Shift/g, "").toUpperCase(),
+        timestamp: new Date().toISOString(),
+      };
+      notifyPalletScanned(code.replace(/Shift/g, "").toUpperCase());
+
+      dispatch(addEventToPaletizationLog(createPalletEvent));
     },
   });
 
@@ -248,19 +248,33 @@ function PaletizationView() {
       color: "#000000",
     }),
   };
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     localStorage.removeItem("b-gantt-trial-start");
-  //     window.location.reload();
-  //   }, 60000);
 
-  // }, []);
+  function handleClickNewPallet() {
+    getLastPallet()
+      .then((result) => {
+        const { nuevoIdentificador, id } = result;
+        // Hacer algo con el nuevo identificador recibido
+        console.log("El nuevo identificador es:", nuevoIdentificador);
+        setBarcodePallet(nuevoIdentificador);
+        const codeScannedEvent = {
+          text: "Nuevo pallet: " + nuevoIdentificador,
+          timestamp: new Date().toISOString(),
+        };
+        dispatch(addEventToPaletizationLog(codeScannedEvent));
+        setIdAuto(id);
+      })
+      .catch((error) => {
+        // Manejar cualquier error que pueda ocurrir
+        console.error("Hubo un error:", error);
+      });
+  }
 
   function handleNew() {
     console.log("Handle new step");
-    setBarcodePallet("Escanea pallet");
+    setBarcodePallet("Nuevo pallet");
     setBarcodeProduct("Escanea producto");
     setValue("");
+    setTotalMontadosValue("");
     dispatch(setGlobalStatus(""));
     dispatch(setTestResults([]));
     dispatch(setComponentsJoined(false));
@@ -268,7 +282,16 @@ function PaletizationView() {
   }
 
   function handleNotify() {
-    dispatch(processInSAP(orderSelected, barcodePallet, value));
+    const codeScannedEvent = {
+      text: "Creando pallet: " + barcodePallet,
+      timestamp: new Date().toISOString(),
+    };
+    dispatch(addEventToPaletizationLog(codeScannedEvent));
+    dispatch(createPallet("MX4FA00P",barcodePallet, value, idAuto));
+
+    setTimeout(() => {
+      dispatch(processInSAP(orderSelected, barcodePallet, value));
+    }, 400);
   }
 
   function buildTreeData(obj) {
@@ -367,45 +390,54 @@ function PaletizationView() {
                     </button>
                   )}
 
-<ReactToPrint
-                  trigger={() => (
-                    <button
-                      onClick={(e) => {}}
-                      className={
-                        value.length > 0 
-                          ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
-                          : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
-                      }
-                      disabled={value.length === 0}
-                    >
-                      <Barcode
-                        className="mr-2 my-auto bg-transparent"
-                        color="#ffff"
-                        size={20}
-                      />
-                      <span className="bg-transparent my-auto text-white font-semibold hover:bg-green-500">
-                        Imprimir etiqueta
-                      </span>
-                    </button>
-                  )}
-                  content={() => labelRef.current}
-                />
-
-                <div style={{ display: "none" }}>
-                  <LabelPrinting
-                    ref={labelRef}
-                    pallet={
-                      barcodePallet != "Escanea pallet"
-                        ? barcodePallet
-                        : "Undefined"
-                    }
-                    qty={value.length > 0 ? value : "Undefined"}
-                    order={Object.keys(orderSelected).length != 0 ? orderSelected.aufnr : "Undefined"}
-                    product={Object.keys(orderSelected).length != 0 ? orderSelected.matnr : "Undefined"}
+                  <ReactToPrint
+                    trigger={() => (
+                      <button
+                        onClick={(e) => {}}
+                        className={
+                          value.length > 0
+                            ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
+                            : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
+                        }
+                        disabled={value.length === 0}
+                      >
+                        <Barcode
+                          className="mr-2 my-auto bg-transparent"
+                          color="#ffff"
+                          size={20}
+                        />
+                        <span className="bg-transparent my-auto text-white font-semibold hover:bg-green-500">
+                          Imprimir etiqueta
+                        </span>
+                      </button>
+                    )}
+                    content={() => labelRef.current}
                   />
-                </div>
 
-                  {value.length == 0 && barcodePallet == "Escanea pallet" ? null : isLoading ? (
+                  <div style={{ display: "none" }}>
+                    <LabelPrinting
+                      ref={labelRef}
+                      pallet={
+                        barcodePallet != "Nuevo pallet"
+                          ? barcodePallet
+                          : "Undefined"
+                      }
+                      qty={value.length > 0 ? value : "Undefined"}
+                      order={
+                        Object.keys(orderSelected).length != 0
+                          ? orderSelected.aufnr
+                          : "Undefined"
+                      }
+                      product={
+                        Object.keys(orderSelected).length != 0
+                          ? orderSelected.matnr
+                          : "Undefined"
+                      }
+                    />
+                  </div>
+
+                  {value.length == 0 &&
+                  barcodePallet == "Nuevo pallet" ? null : isLoading ? (
                     <button
                       onClick={
                         handleNotify
@@ -433,12 +465,12 @@ function PaletizationView() {
                         //
                       }
                       className={
-                        value.length > 0 && barcodePallet != "Escanea pallet"
+                        value.length > 0 && barcodePallet != "Nuevo pallet"
                           ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
                           : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
                       }
                       disabled={
-                        value.length > 0 && barcodePallet != "Escanea pallet"
+                        value.length > 0 && barcodePallet != "Nuevo pallet"
                           ? false
                           : true
                       }
@@ -454,47 +486,72 @@ function PaletizationView() {
           </header>
           <div className="max-w-full mx-4 py-0 sm:mx-auto">
             <div className="sm:flex sm:space-x-4">
+              {
+                Object.keys(orderSelected).length === 0 ? (
+                  <section  className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
+  <div className="bg-white p-5">
+    <div className="sm:flex sm:items-start bg-white">
+      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
+        <div className="flex items-center">
+          <Grid8 className="mr-2" color="#A0A2A6" size={20} />
+          <h3 className="bg-white text-md font-medium text-gray">
+            Pallet
+          </h3>
+        </div>
+        <p
+          className="bg-white text-3xl font-bold text-black"
+        >
+          {Object.keys(orderSelected).length === 0
+            ? "Selecciona órden"
+            : barcodePallet}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+                ) : 
+                <button onClick={handleClickNewPallet} className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
+  <div className="bg-white p-5">
+    <div className="sm:flex sm:items-start bg-white">
+      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
+        <div className="flex items-center">
+          <Grid8 className="mr-2" color="#A0A2A6" size={20} />
+          <h3 className="bg-white text-md font-medium text-gray">
+            Pallet
+          </h3>
+        </div>
+        <p
+          className="bg-white text-3xl font-bold text-black"
+          onClick={handleClickNewPallet}
+        >
+          {Object.keys(orderSelected).length === 0
+            ? "Selecciona órden"
+            : barcodePallet}
+        </p>
+      </div>
+    </div>
+  </div>
+</button>
+              }
+            
+
+
               <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                       <div className="flex items-center">
-                        <Grid8 className="mr-2" color="#A0A2A6" size={20} />
-                        <h3 className="bg-white text-md font-medium text-gray">
-                          Pallet
-                        </h3>
-                      </div>
-
-                      <p className="bg-white text-3xl font-bold text-black">
-                        {Object.keys(orderSelected).length === 0
-                          ? "Selecciona órden"
-                          : barcodePallet}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
-                <div className="bg-white p-5">
-                  <div className="sm:flex sm:items-start bg-white">
-                    <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
-                      <div className="flex items-center">
-                      <Notepad2
-                            className="mr-2"
-                            color="#A0A2A6"
-                            size={20}
-                          />
+                        <Notepad2 className="mr-2" color="#A0A2A6" size={20} />
                         <h3 className="bg-white text-md font-medium text-gray">
                           Órden
                         </h3>
                       </div>
 
                       <p className="bg-white text-3xl font-bold text-black">
-                          {Object.keys(orderSelected).length === 0
-                            ? "Selecciona órden"
-                            : orderSelected.aufnr}
-                        </p>
+                        {Object.keys(orderSelected).length === 0
+                          ? "Selecciona órden"
+                          : orderSelected.aufnr}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -521,7 +578,7 @@ function PaletizationView() {
                           className="w-36 border border-transparent focus:border-transparent focus:outline-none"
                           type="text"
                           placeholder="Cantidad"
-                          ref={inputRef} 
+                          ref={inputRef}
                           value={value}
                           onChange={handleChange}
                           onKeyPress={handleKeyPress} // Llama a handleKeyPress cuando se presiona una tecla
@@ -558,7 +615,7 @@ function PaletizationView() {
                           className="w-36 border border-transparent focus:border-transparent focus:outline-none"
                           type="text"
                           placeholder="Cantidad"
-                          ref={totalMontadosRef} 
+                          ref={totalMontadosRef}
                           value={totalMontadosValue}
                           onChange={handleChangeMontados}
                           onKeyPress={handleKeyPressMontados} // Llama a handleKeyPress cuando se presiona una tecla
@@ -569,7 +626,10 @@ function PaletizationView() {
                             <Lock color="#A0A2A6" size={20} />
                           </button>
                         ) : (
-                          <button onClick={toggleEditableMontados} className="ml-2">
+                          <button
+                            onClick={toggleEditableMontados}
+                            className="ml-2"
+                          >
                             <Edit color="#A0A2A6" size={20} />
                           </button>
                         )}
@@ -580,10 +640,7 @@ function PaletizationView() {
               </section>
             </div>
             <div className="max-w-full mx-4 py-0 sm:mx-auto">
-              <div
-                className="sm:flex sm:space-x-4"
-              >
-          
+              <div className="sm:flex sm:space-x-4">
                 <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:my-4">
                   <div className="bg-white p-5">
                     <div className="sm:flex sm:items-start bg-white">
@@ -609,44 +666,44 @@ function PaletizationView() {
                   </div>
                 </section>
 
-                  <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 sm:my-4">
-              <div className="bg-white p-5">
-                <div className="sm:flex sm:items-start bg-white">
-                  <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
-                    <div className="flex items-center">
-                      <Cd className="mr-2" color="#A0A2A6" size={20} />
-                      <h3 className="bg-white text-md font-medium text-gray">
-                        Planeado
-                      </h3>
+                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 sm:my-4">
+                  <div className="bg-white p-5">
+                    <div className="sm:flex sm:items-start bg-white">
+                      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
+                        <div className="flex items-center">
+                          <Cd className="mr-2" color="#A0A2A6" size={20} />
+                          <h3 className="bg-white text-md font-medium text-gray">
+                            Planeado
+                          </h3>
+                        </div>
+                        <p className="bg-white text-3xl font-bold text-black">
+                          {Object.keys(orderSelected).length === 0
+                            ? "--------"
+                            : `${orderSelected.qtdpl}`}
+                        </p>
+                      </div>
                     </div>
-                    <p className="bg-white text-3xl font-bold text-black">
-                      {Object.keys(orderSelected).length === 0
-                        ? "--------"
-                        : `${orderSelected.qtdpl}`}
-                    </p>
                   </div>
-                </div>
-              </div>
-            </section>
-            <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 sm:my-4">
-              <div className="bg-white p-5">
-                <div className="sm:flex sm:items-start bg-white">
-                  <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
-                    <div className="flex items-center">
-                      <Cd className="mr-2" color="#A0A2A6" size={20} />
-                      <h3 className="bg-white text-md font-medium text-gray">
-                        Apuntado
-                      </h3>
+                </section>
+                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 sm:my-4">
+                  <div className="bg-white p-5">
+                    <div className="sm:flex sm:items-start bg-white">
+                      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
+                        <div className="flex items-center">
+                          <Cd className="mr-2" color="#A0A2A6" size={20} />
+                          <h3 className="bg-white text-md font-medium text-gray">
+                            Apuntado
+                          </h3>
+                        </div>
+                        <p className="bg-white text-3xl font-bold text-black">
+                          {Object.keys(orderSelected).length === 0
+                            ? "--------"
+                            : `${orderSelected.qtdpr}`}
+                        </p>
+                      </div>
                     </div>
-                    <p className="bg-white text-3xl font-bold text-black">
-                      {Object.keys(orderSelected).length === 0
-                        ? "--------"
-                        : `${orderSelected.qtdpr}`}
-                    </p>
                   </div>
-                </div>
-              </div>
-            </section>
+                </section>
               </div>
 
               {/* <section

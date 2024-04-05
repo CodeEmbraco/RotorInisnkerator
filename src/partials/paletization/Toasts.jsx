@@ -11,6 +11,8 @@ export const notifyCondenserScanned = (code) => toast.success('Condensador escan
 
 export const notifyProductMounted = (code) => toast.success('Producto montado: ' + code, { style: {} });
 
+export const notifyPalletCreated = (code) => toast.success('Pallet creado: ' + code, { style: {} });
+
 export const notifyProductsJoined= (code) => toast.success('Unión exitosa: ' + code, { style: {} });
 
 export const notifyGenealogyNotFound = (code) => toast.error('Genealogía no encontrada: ' + code);

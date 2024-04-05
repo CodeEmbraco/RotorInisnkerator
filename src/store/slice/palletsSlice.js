@@ -1,7 +1,8 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { endpointsCodes } from './endpointCodes';
-import { notifyError, notifyErrorInSAP, notifyGenealogyNotFound, notifyProductMounted, notifyProductUnmounted, notifyProductsJoined, notifySuccesInSAP } from '../../partials/paletization/Toasts';
+import { notifyError, notifyErrorInSAP, notifyGenealogyNotFound, notifyProductMounted, notifyProductUnmounted, notifyProductsJoined, notifySuccesInSAP, notifyPalletCreated } from '../../partials/paletization/Toasts';
+import { addEventToPaletizationLog } from './eventsLogSlice';
 
 const initialState = {
     pallet: {},
@@ -68,7 +69,7 @@ export default palletsSlice.reducer;
 export const joinComponents = (payload) => (dispatch) => {
  
   axios
-    .post(`http://10.13.225.20:8002/api/v1/genealogy/component/`, payload)
+    .post(`http://10.13.225.20:8004/api/v1/genealogy/component/`, payload)
     .then((response) => {
       if (response.status === 201) {
         notifyProductsJoined(payload.condenser_unit_serial)
@@ -91,7 +92,7 @@ export const joinComponents = (payload) => (dispatch) => {
 export const getCompressor = (condenserSerial) => async (dispatch) => {
   try {
     console.log("Validando condenser serial");
-    const response = await axios.get(`http://10.13.225.20:8002/api/v1/genealogy/component/?condenser_unit_serial=${condenserSerial}`);
+    const response = await axios.get(`http://10.13.225.20:8004/api/v1/genealogy/component/?condenser_unit_serial=${condenserSerial}`);
     if (response.status === 200) {
       // dispatch(setGenealogyData(response.data));
       // dispatch(setComponentsJoined(true));
@@ -107,8 +108,32 @@ export const getCompressor = (condenserSerial) => async (dispatch) => {
   }
 };
 
+export const getLastPallet = () => {
+  //dispatch(setLoading(true));
+  // const startFetchOrders = {
+  //   text: 'Obteniendo órdenes desde SAP',
+  //   timestamp: new Date().toISOString(),
+  // };
+  // dispatch(addEvent(startFetchOrders));
+  return axios
+    .get('http://10.13.225.20:8004/api/v1/paletization/pallets/?workstation=MX4FA00P')
+    .then((response) => {
+      if (response.status === 200) {
+        //dispatch(setLoading(false));
+        console.log("Último pallet");
+        console.log(response.data);
+        const objectResponse = response.data;
+        const id = objectResponse.id_auto + 1; // Suma uno al id
+        const nuevoIdentificador = "WET" + id.toString().padStart(4, "0");
+        return {nuevoIdentificador, id};
+        // dispatch(setPallet(response.data));
+      }
+    })
+    .catch((error) => endpointsCodes(error, dispatch, setNotFound));
+};
 
-export const createPallet = (barcode, quantity) => (dispatch) => {
+
+export const createPallet = (workstation, identifier, quantity, idAuto) => (dispatch) => {
     //dispatch(setLoading(true));
     // const startFetchOrders = {
     //   text: 'Obteniendo órdenes desde SAP',
@@ -116,11 +141,13 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
     // };
     // dispatch(addEvent(startFetchOrders));
     const palletData = {
-        identifier: barcode,
-        quantity: quantity
+        workstation: workstation,
+        identifier: identifier,
+        quantity: quantity,
+        id_auto: idAuto
     }
     axios
-      .post('http://10.13.225.20:8002/api/v1/paletization/pallets/', palletData)
+      .post('http://10.13.225.20:8004/api/v1/paletization/pallets/', palletData)
       .then((response) => {
         if (response.status === 201) {
           //dispatch(setLoading(false));
@@ -129,12 +156,17 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
           //console.log(response.data.global_status);
           //dispatch(setGlobalStatus(response.data.global_status));
           dispatch(setPallet(response.data));
+          const palletCreated = {
+            text: "Pallet creado: " + identifier,
+            timestamp: new Date().toISOString(),
+          };
+          dispatch(addEventToPaletizationLog(palletCreated));
+          notifyPalletCreated(identifier)
         } else if (response.status === 200){
         console.log("Se encontró registro de Pallet:", response.data);
         dispatch(setPallet(response.data));
         const palletIdentifier = response.data.identifier;
         console.log(palletIdentifier);
-        dispatch(getAllComponents(palletIdentifier))
         }
       })
       .catch((error) => endpointsCodes(error, dispatch, setNotFound));
@@ -148,7 +180,7 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
     // };
     // dispatch(addEvent(startFetchOrders));
     axios
-     .get(`http://10.13.225.20:8002/api/v1/paletization/pallets/${palletIdentifier}/components/`)
+     .get(`http://10.13.225.20:8004/api/v1/paletization/pallets/${palletIdentifier}/components/`)
      .then((response) => {
         if (response.status === 200) {
           //dispatch(setLoading(false));
@@ -171,7 +203,7 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
     }
     console.log("Montando componente + ", data);
     axios
-      .post(`http://10.13.225.20:8002/api/v1/paletization/pallets/${palletId}/components/add/`, data)
+      .post(`http://10.13.225.20:8004/api/v1/paletization/pallets/${palletId}/components/add/`, data)
       .then((response) => {
         console.log(response.status);
         console.log("MANDANDO A ACTUALIZAR LOS COMPONENTS")
@@ -192,7 +224,7 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
   export const unmountComponentAPI = (palletIdentifier, component) => (dispatch) => {
     // Realiza una solicitud DELETE para desmontar el componente
     axios
-      .delete(`http://10.13.225.20:8002/api/v1/paletization/pallets/${palletIdentifier}/components/${component.id}/dismount/`)
+      .delete(`http://10.13.225.20:8004/api/v1/paletization/pallets/${palletIdentifier}/components/${component.id}/dismount/`)
       .then((response) => {
         if (response.status === 204) {
             notifyProductUnmounted(component.compUnitSerial);
@@ -228,7 +260,7 @@ export const createPallet = (barcode, quantity) => (dispatch) => {
     
   
     axios
-      .post(`http://10.13.225.20:8002/api/v1/paletization/pallets/sap/notifiy/`, xmlData)
+      .post(`http://10.13.225.20:8004/api/v1/paletization/pallets/sap/notifiy/`, xmlData)
       .then((response) => {
         console.log("MANDANDO A NOTIFICAR A SAP")
         if (response.status === 200) {

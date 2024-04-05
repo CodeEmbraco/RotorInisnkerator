@@ -73,7 +73,7 @@ const LabelPrinting = forwardRef((props, ref) => {
        </div>
       <div className="d-flex">
       <p className="label">Batch - Order</p>
-      <h2 className="text-lg" >{"WET" + pallet + "-" + order} </h2>
+      <h2 className="text-lg" >{pallet + "-" + order} </h2>
       <div>
       <BarcodeGeneratorFunction value={pallet + "-" + order} />
                 </div>
