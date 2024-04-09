@@ -28,6 +28,8 @@ import useScanDetection from "use-scan-detection";
 
 import { useSelector, useDispatch } from "react-redux";
 
+import ModalBlank from "../components/ModalBlank";
+
 import {
   selectOrderSelected,
   metadataOrderSelected,
@@ -63,10 +65,14 @@ import {
   notifyPalletScanned,
   notifyProductScanned,
 } from "../partials/paletization/Toasts";
-import ModalBlank from "../components/ModalBlank";
 
 function PaletizationView() {
-  const [value, setValue] = useState("");
+  const [dangerDiffValues, setDangerDiffValues] = useState(false);
+  const [confirmEditDiffValues, setConfirmEditDiffValues] = useState(false);
+  const [dangerEditQtyPalletModalOpen, setDangerEditQtyPalletModalOpen] =
+    useState(false);
+  const [confirmEditQtyPallet, setConfirmEditQtyPallet] = useState(false);
+  const [value, setValue] = useState("1452");
   const [editable, setEditable] = useState(false); // Cambié el estado inicial a 'false'
   const inputRef = useRef(null);
 
@@ -74,12 +80,24 @@ function PaletizationView() {
     setValue(event.target.value);
   };
 
-  const toggleEditable = () => {
-    setEditable(!editable); // Invierte el estado de editable
-    if (!editable) {
-      inputRef.current.focus(); // Pone en foco el input cuando se activa la edición
-    }
+  const toggleEditable = (e) => {
+    e.stopPropagation();
+    setDangerEditQtyPalletModalOpen(true);
   };
+
+  useEffect(() => {
+    if (confirmEditQtyPallet) {
+      setEditable(!editable); // Invierte el estado de editable
+      if (!editable) {
+        inputRef.current.focus(); // Pone en foco el input cuando se activa la edición
+      }
+      setConfirmEditQtyPallet(false); //
+    } else {
+      console.log("No confirmó edición");
+    }
+  }, [confirmEditQtyPallet]);
+
+
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
@@ -108,12 +126,18 @@ function PaletizationView() {
 
   const handleKeyPressMontados = (event) => {
     if (event.key === "Enter") {
+      if(value != totalMontadosValue){
+        setDangerDiffValues(true);
+      }
       setTotalMontadosEditable(false); // Bloquea el input si se presiona la tecla Enter
     }
   };
 
   const handleSaveMontados = () => {
-    setTotalMontadosEditable(false); // Bloquea el input cuando se guarda
+    if(value != totalMontadosValue){
+      setDangerDiffValues(true);
+    }
+    setTotalMontadosEditable(false); // Bloquea el input si se presiona la tecla Enter
   };
 
   const testResultsList = useSelector(selectTestResults);
@@ -287,10 +311,12 @@ function PaletizationView() {
       timestamp: new Date().toISOString(),
     };
     dispatch(addEventToPaletizationLog(codeScannedEvent));
-    dispatch(createPallet("MX4FA00P",barcodePallet, value, idAuto));
+    dispatch(
+      createPallet("MX4FA00P", barcodePallet, totalMontadosValue, idAuto)
+    );
 
     setTimeout(() => {
-      dispatch(processInSAP(orderSelected, barcodePallet, value));
+      dispatch(processInSAP(orderSelected, barcodePallet, totalMontadosValue));
     }, 400);
   }
 
@@ -395,11 +421,11 @@ function PaletizationView() {
                       <button
                         onClick={(e) => {}}
                         className={
-                          value.length > 0
+                          totalMontadosValue.length > 0
                             ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
                             : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
                         }
-                        disabled={value.length === 0}
+                        disabled={totalMontadosValue.length === 0}
                       >
                         <Barcode
                           className="mr-2 my-auto bg-transparent"
@@ -422,7 +448,7 @@ function PaletizationView() {
                           ? barcodePallet
                           : "Undefined"
                       }
-                      qty={value.length > 0 ? value : "Undefined"}
+                      qty={totalMontadosValue.length > 0 ? totalMontadosValue : "Undefined"}
                       order={
                         Object.keys(orderSelected).length != 0
                           ? orderSelected.aufnr
@@ -436,7 +462,7 @@ function PaletizationView() {
                     />
                   </div>
 
-                  {value.length == 0 &&
+                  {totalMontadosValue.length == 0 &&
                   barcodePallet == "Nuevo pallet" ? null : isLoading ? (
                     <button
                       onClick={
@@ -465,12 +491,14 @@ function PaletizationView() {
                         //
                       }
                       className={
-                        value.length > 0 && barcodePallet != "Nuevo pallet"
+                        totalMontadosValue.length > 0 &&
+                        barcodePallet != "Nuevo pallet"
                           ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
                           : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
                       }
                       disabled={
-                        value.length > 0 && barcodePallet != "Nuevo pallet"
+                        totalMontadosValue.length > 0 &&
+                        barcodePallet != "Nuevo pallet"
                           ? false
                           : true
                       }
@@ -486,55 +514,53 @@ function PaletizationView() {
           </header>
           <div className="max-w-full mx-4 py-0 sm:mx-auto">
             <div className="sm:flex sm:space-x-4">
-              {
-                Object.keys(orderSelected).length === 0 ? (
-                  <section  className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
-  <div className="bg-white p-5">
-    <div className="sm:flex sm:items-start bg-white">
-      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
-        <div className="flex items-center">
-          <Grid8 className="mr-2" color="#A0A2A6" size={20} />
-          <h3 className="bg-white text-md font-medium text-gray">
-            Pallet
-          </h3>
-        </div>
-        <p
-          className="bg-white text-3xl font-bold text-black"
-        >
-          {Object.keys(orderSelected).length === 0
-            ? "Selecciona órden"
-            : barcodePallet}
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-                ) : 
-                <button onClick={handleClickNewPallet} className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
-  <div className="bg-white p-5">
-    <div className="sm:flex sm:items-start bg-white">
-      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
-        <div className="flex items-center">
-          <Grid8 className="mr-2" color="#A0A2A6" size={20} />
-          <h3 className="bg-white text-md font-medium text-gray">
-            Pallet
-          </h3>
-        </div>
-        <p
-          className="bg-white text-3xl font-bold text-black"
-          onClick={handleClickNewPallet}
-        >
-          {Object.keys(orderSelected).length === 0
-            ? "Selecciona órden"
-            : barcodePallet}
-        </p>
-      </div>
-    </div>
-  </div>
-</button>
-              }
-            
-
+              {Object.keys(orderSelected).length === 0 ? (
+                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
+                  <div className="bg-white p-5">
+                    <div className="sm:flex sm:items-start bg-white">
+                      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
+                        <div className="flex items-center">
+                          <Grid8 className="mr-2" color="#A0A2A6" size={20} />
+                          <h3 className="bg-white text-md font-medium text-gray">
+                            Pallet
+                          </h3>
+                        </div>
+                        <p className="bg-white text-3xl font-bold text-black">
+                          {Object.keys(orderSelected).length === 0
+                            ? "Selecciona órden"
+                            : barcodePallet}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              ) : (
+                <button
+                  onClick={handleClickNewPallet}
+                  className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4"
+                >
+                  <div className="bg-white p-5">
+                    <div className="sm:flex sm:items-start bg-white">
+                      <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
+                        <div className="flex items-center">
+                          <Grid8 className="mr-2" color="#A0A2A6" size={20} />
+                          <h3 className="bg-white text-md font-medium text-gray">
+                            Pallet
+                          </h3>
+                        </div>
+                        <p
+                          className="bg-white text-3xl font-bold text-black"
+                          onClick={handleClickNewPallet}
+                        >
+                          {Object.keys(orderSelected).length === 0
+                            ? "Selecciona órden"
+                            : barcodePallet}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              )}
 
               <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
                 <div className="bg-white p-5">
@@ -783,6 +809,134 @@ function PaletizationView() {
             </section>
           </div>
         </div>
+      </div>
+
+      <div className="m-1.5">
+        {/* Start */}
+
+        <ModalBlank
+          id="danger-modal"
+          modalOpen={dangerEditQtyPalletModalOpen}
+          setModalOpen={setDangerEditQtyPalletModalOpen}
+        >
+          <div className="p-5 flex space-x-4">
+            {/* Icon */}
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-rose-100">
+              <svg
+                className="w-4 h-4 shrink-0 fill-current text-rose-500"
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm1-3H7V4h2v5z" />
+              </svg>
+            </div>
+            {/* Content */}
+            <div>
+              {/* Modal header */}
+              <div className="mb-2">
+                <div className="text-lg font-semibold text-slate-800">
+                  Editar Cantidad pallet
+                </div>
+              </div>
+              {/* Modal content */}
+              <div className="text-sm text-black mb-10">
+                <div className="space-y-2">
+                  <p>
+                    ¿Estás seguro que deseas cambiar la cantidad estándar de unidades por Pallet? La
+                    cantidad estándar es 1452, si deseas proceder da click en "Si, editar"
+                  </p>
+                </div>
+              </div>
+              {/* Modal footer */}
+              <div className="flex flex-wrap justify-end space-x-2">
+                <button
+                  className="btn-sm border-slate-200 hover:border-slate-300 text-slate-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDangerEditQtyPalletModalOpen(false);
+                    setConfirmEditQtyPallet(false);
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="btn-sm bg-rose-500 hover:bg-rose-600 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setConfirmEditQtyPallet(true);
+                    setDangerEditQtyPalletModalOpen(false);
+                  }}
+                >
+                  Si, editar
+                </button>
+              </div>
+            </div>
+          </div>
+        </ModalBlank>
+        {/* End */}
+      </div>
+
+      <div className="m-1.5">
+        {/* Start */}
+
+        <ModalBlank
+          id="danger-modal"
+          modalOpen={dangerDiffValues}
+          setModalOpen={setDangerDiffValues}
+        >
+          <div className="p-5 flex space-x-4">
+            {/* Icon */}
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-rose-100">
+              <svg
+                className="w-4 h-4 shrink-0 fill-current text-rose-500"
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm1-3H7V4h2v5z" />
+              </svg>
+            </div>
+            {/* Content */}
+            <div>
+              {/* Modal header */}
+              <div className="mb-2">
+                <div className="text-lg font-semibold text-slate-800">
+                  Confirmar edición
+                </div>
+              </div>
+              {/* Modal content */}
+              <div className="text-sm text-black mb-10">
+                <div className="space-y-2">
+                  <p>
+                  El total montado difiere de la cantidad estándar definida. La cantidad estándar por pallet son 1452 unidades. ¿Deseas confirmar el cambio y montar solo {totalMontadosValue} unidades? Haz clic en 'Sí' para proceder.
+                  </p>
+                </div>
+              </div>
+              {/* Modal footer */}
+              <div className="flex flex-wrap justify-end space-x-2">
+                <button
+                  className="btn-sm border-slate-200 hover:border-slate-300 text-slate-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTotalMontadosValue("");
+                    setDangerDiffValues(false);
+                    setConfirmEditDiffValues(false);
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="btn-sm bg-rose-500 hover:bg-rose-600 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setConfirmEditDiffValues(true);
+                    setDangerDiffValues(false);
+                  }}
+                >
+                  Si, proceder
+                </button>
+              </div>
+            </div>
+          </div>
+        </ModalBlank>
+        {/* End */}
       </div>
     </>
   );
