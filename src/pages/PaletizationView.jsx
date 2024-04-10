@@ -57,6 +57,7 @@ import {
   setComponentsJoined,
   setComponents,
   selectLoadingProcessInSap,
+  selectPalletNotified,
 } from "../store/slice/palletsSlice";
 import LabelPrinting from "../partials/genealogy/LabelPrinting";
 import ComponentsTable from "../partials/paletization/ComponentsTable";
@@ -145,6 +146,7 @@ function PaletizationView() {
   const orderSelected = useSelector(selectOrderSelected);
   const metadata = useSelector(metadataOrderSelected);
   const paletizationLog = useSelector(selectPaletizationLog);
+  const palletNotified = useSelector(selectPalletNotified);
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
 
@@ -297,7 +299,7 @@ function PaletizationView() {
     console.log("Handle new step");
     setBarcodePallet("Nuevo pallet");
     setBarcodeProduct("Escanea producto");
-    setValue("");
+    setValue("1452");
     setTotalMontadosValue("");
     dispatch(setGlobalStatus(""));
     dispatch(setTestResults([]));
@@ -491,12 +493,14 @@ function PaletizationView() {
                         //
                       }
                       className={
+                        palletNotified.ICharg != barcodePallet &&
                         totalMontadosValue.length > 0 &&
                         barcodePallet != "Nuevo pallet"
                           ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
                           : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
                       }
                       disabled={
+                        palletNotified.ICharg != barcodePallet &&
                         totalMontadosValue.length > 0 &&
                         barcodePallet != "Nuevo pallet"
                           ? false

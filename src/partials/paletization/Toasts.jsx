@@ -19,7 +19,11 @@ export const notifyGenealogyNotFound = (code) => toast.error('Genealogía no enc
 
 export const notifyProductUnmounted = (code) => toast.success('Producto desmontado: ' + code, { style: {} , icon: 'ℹ️' });
 
-export const notifySuccesInSAP = (lote, mensaje) => toast.success(`Lote ${lote} procesado exitosamente en SAP - Mensaje ${mensaje}`, { style: {}, duration: 10000 });
+export const notifySuccesInSAP = (lote, mensaje) => toast.success(`Lote ${lote} procesado exitosamente en SAP: ${mensaje}`, { style: {}, duration: 10000 });
+
+export const notifiyGettingOrderDetail = (order) => toast.loading(`Actualizando información de la órden ${order}`)
+
+export const notifyOrderDetailSuccess = (order) => toast.success(`Valor de apuntado actualizado para la órden ${order}`)
 
 export const notifyErrorInSAP = (lote, error) => toast.error(`Error al procesar el lote ${lote} en SAP: ${error}`, { style: {}, duration: 9000 });
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { endpointsCodes } from './endpointCodes';
 import { notifyError, notifyErrorInSAP, notifyGenealogyNotFound, notifyProductMounted, notifyProductUnmounted, notifyProductsJoined, notifySuccesInSAP, notifyPalletCreated } from '../../partials/paletization/Toasts';
 import { addEventToPaletizationLog } from './eventsLogSlice';
+import { getOrderDetail } from './ordersSlice';
 
 const initialState = {
     pallet: {},
@@ -10,6 +11,7 @@ const initialState = {
     componentsJoined: false,
     genealogyData: {},
     loadingProcessInSap: false,
+    palletNotified: {}
 }
 
 const palletsSlice = createSlice({
@@ -41,6 +43,9 @@ const palletsSlice = createSlice({
         setLoadingProcessInSap: (state, action) => {
           state.loadingProcessInSap = action.payload;
         },
+        setPalletNotified: (state, action) => {
+          state.palletNotified = action.payload;
+        }
       },
 });
 
@@ -50,7 +55,8 @@ export const {
     unmountComponent,
     setComponentsJoined,
     setGenealogyData,
-    setLoadingProcessInSap
+    setLoadingProcessInSap,
+    setPalletNotified
   } = palletsSlice.actions;
   
 
@@ -63,6 +69,8 @@ export const selectComponentsJoined = (state) => state.pallets.componentsJoined;
 export const selectGenealogyData = (state) => state.pallets.genealogyData;
 
 export const selectLoadingProcessInSap = (state) => state.pallets.loadingProcessInSap;
+
+export const selectPalletNotified = (state) => state.pallets.palletNotified;
 
 export default palletsSlice.reducer;
 
@@ -269,7 +277,13 @@ export const createPallet = (workstation, identifier, quantity, idAuto) => (disp
           if (response.data.EMessage === "Process Notification executed successfully") {
             console.log("Notificación exitosa")
             notifySuccesInSAP(xmlData.ICharg, response.data.EMessage);
-            dispatch(getAllComponents(pallet.identifier));
+            const palletHasBeenNotified = {
+              text: "Pallet notificado: " + xmlData.ICharg,
+              timestamp: new Date().toISOString(),
+            };
+            dispatch(addEventToPaletizationLog(palletHasBeenNotified));
+            dispatch(setPalletNotified({"ICharg": xmlData.ICharg}))
+            dispatch(getOrderDetail(orderSelected.aufnr))
           } else {
             dispatch(setLoadingProcessInSap(false));
             console.log("Error!")

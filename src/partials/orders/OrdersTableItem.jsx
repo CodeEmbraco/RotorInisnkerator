@@ -24,6 +24,7 @@ function OrdersTableItem(props) {
               };
               console.log(props);
               notifyOrderSelected(props.id);
+              console.log(props);
               dispatch(setOrderSelected(props));
               const idMaterial = props.matnr.substring(props.matnr.length - 9);
               dispatch(getMetadataFromOrder(idMaterial));
