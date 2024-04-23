@@ -18,7 +18,6 @@ function LogsView(){
                 </div>
                 </div>
                 </header>
-
                 </div>
                 <LogsTable selectedItems={handleSelectedItems} />
                 </div>
