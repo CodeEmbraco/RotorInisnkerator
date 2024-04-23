@@ -158,6 +158,7 @@ function ComponentsTable({ selectedItems }) {
                         condMaterialCode={component.condenser_material_code}
                         condUnitSerial={component.condenser_unit_serial}
                         sendToSAP={component.send_to_sap}
+                        sap_success={component.sap_success}
                         sapStatus={component.sap_status}
                         materialType={component.material_type}
 

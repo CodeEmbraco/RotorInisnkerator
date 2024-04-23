@@ -25,6 +25,7 @@ function BarChart01({
     const chart = new Chart(ctx, {
       type: 'bar',
       data: data,
+      redraw: true,
       options: {
         layout: {
           padding: {
@@ -47,10 +48,10 @@ function BarChart01({
           x: {
             type: 'time',
             time: {
-              parser: 'MM-DD-YYYY',
-              unit: 'month',
+              parser: 'YYYY-MM-DD',
+              unit: 'day',
               displayFormats: {
-                month: 'MMM YY',
+                month: 'MM YY',
               },
             },
             grid: {
@@ -145,7 +146,7 @@ function BarChart01({
     });
     return () => chart.destroy();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data]);
 
   return (
       <div className="grow">

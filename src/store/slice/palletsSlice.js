@@ -11,7 +11,8 @@ const initialState = {
     componentsJoined: false,
     genealogyData: {},
     loadingProcessInSap: false,
-    palletNotified: {}
+    palletNotified: {},
+    logs: []
 }
 
 const palletsSlice = createSlice({
@@ -45,6 +46,9 @@ const palletsSlice = createSlice({
         },
         setPalletNotified: (state, action) => {
           state.palletNotified = action.payload;
+        },
+        setLogs: (state, action) => {
+          state.logs = action.payload;
         }
       },
 });
@@ -56,7 +60,8 @@ export const {
     setComponentsJoined,
     setGenealogyData,
     setLoadingProcessInSap,
-    setPalletNotified
+    setPalletNotified,
+    setLogs
   } = palletsSlice.actions;
   
 
@@ -71,6 +76,8 @@ export const selectGenealogyData = (state) => state.pallets.genealogyData;
 export const selectLoadingProcessInSap = (state) => state.pallets.loadingProcessInSap;
 
 export const selectPalletNotified = (state) => state.pallets.palletNotified;
+
+export const selectLogs = (state) => state.pallets.logs;
 
 export default palletsSlice.reducer;
 
@@ -141,7 +148,7 @@ export const getLastPallet = () => {
 };
 
 
-export const createPallet = (workstation, identifier, quantity, idAuto) => (dispatch) => {
+export const createPallet = (workstation, order, product, identifier, quantity, idAuto) => (dispatch) => {
     //dispatch(setLoading(true));
     // const startFetchOrders = {
     //   text: 'Obteniendo órdenes desde SAP',
@@ -150,6 +157,8 @@ export const createPallet = (workstation, identifier, quantity, idAuto) => (disp
     // dispatch(addEvent(startFetchOrders));
     const palletData = {
         workstation: workstation,
+        order: order,
+        product: product,
         identifier: identifier,
         quantity: quantity,
         id_auto: idAuto
@@ -194,6 +203,27 @@ export const createPallet = (workstation, identifier, quantity, idAuto) => (disp
           //dispatch(setLoading(false));
           console.log(response.data);
           dispatch(setComponents(response.data));
+          //console.log(response.data.global_status);
+          //dispatch(setGlobalStatus(response.data.global_status));
+        }
+      })
+     .catch((error) => endpointsCodes(error, dispatch, setNotFound));
+  }
+
+  export const getLogs = () => (dispatch) => {
+    //dispatch(setLoading(true));
+    // const startFetchOrders = {
+    //   text: 'Obteniendo órdenes desde SAP',
+    //   timestamp: new Date().toISOString(),
+    // };
+    // dispatch(addEvent(startFetchOrders));
+    axios
+     .get(`http://10.13.225.20:8004/api/v1/paletization/logs/?workstation=MX4FA00P&page=1&page_size=10`)
+     .then((response) => {
+        if (response.status === 200) {
+          //dispatch(setLoading(false));
+          console.log(response.data);
+          dispatch(setLogs(response.data));
           //console.log(response.data.global_status);
           //dispatch(setGlobalStatus(response.data.global_status));
         }
@@ -246,6 +276,43 @@ export const createPallet = (workstation, identifier, quantity, idAuto) => (disp
         endpointsCodes(error, dispatch, setNotFound);
       });
   };
+
+  export const reprocessPallet = (palletIdentifier) => (dispatch) => {
+    // Realiza una solicitud DELETE para desmontar el componente
+    const data = {
+      pallet: palletIdentifier
+    }
+    axios
+      .post(`http://10.13.225.20:8004/api/v1/paletization/reprocess/`, data)
+      .then((response) => {
+        
+        if (response.status === 200) {
+          dispatch(setLoadingProcessInSap(false));
+          console.log(response.data);
+          if (response.data.EMessage === "Process Notification executed successfully") {
+            console.log("Notificación exitosa")
+            notifySuccesInSAP(xmlData.ICharg, response.data.EMessage);
+            const palletHasBeenNotified = {
+              text: "Pallet notificado: " + xmlData.ICharg,
+              timestamp: new Date().toISOString(),
+            };
+            dispatch(addEventToPaletizationLog(palletHasBeenNotified));
+            dispatch(setPalletNotified({"ICharg": xmlData.ICharg}))
+            dispatch(getOrderDetail(orderSelected.aufnr))
+          } else {
+            dispatch(setLoadingProcessInSap(false));
+            console.log("Error!")
+            console.log(response.data.EMessage)
+            notifyErrorInSAP(xmlData.ICharg, response.data.EMessage);
+          }
+        }
+      })
+      .catch((error) => {
+        // Maneja los errores, como lo hiciste anteriormente
+        endpointsCodes(error, dispatch, setNotFound);
+      });
+  };
+
 
   export const processInSAP = (orderSelected, pallet, n_components) => (dispatch) => {
     dispatch(setLoadingProcessInSap(true));

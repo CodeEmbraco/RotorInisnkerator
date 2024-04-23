@@ -13,6 +13,7 @@ import LabelPrinting from "./partials/genealogy/LabelPrinting";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
+import LogsPage from "./pages/LogsPage";
 
 function App() {
   const location = useLocation();
@@ -44,6 +45,15 @@ function App() {
           element={
             <PublicRoute>
               <Signin />
+            </PublicRoute>
+          }
+        />
+
+<Route
+          path="/logs"
+          element={
+            <PublicRoute>
+              <LogsPage />
             </PublicRoute>
           }
         />

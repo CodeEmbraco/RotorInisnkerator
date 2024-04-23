@@ -76,14 +76,16 @@ function Header({
                     Órdenes
                   </a>
                 </button>
-                <a
-                  href="#"
-                  className="flex bg-black hover:text-hoverTextSidebar transition duration-500 easy-in-out text-white font-semibold lg:mr-7"
+                <Link
+                 to="/logs"
+                 className={`flex bg-black hover:text-hoverTextSidebar transition duration-500 easy-in-out ${location.pathname === '/logs' ? 'text-hoverTextSidebar' : 'text-white'} font-semibold lg:mr-7`}
                 >
+               
                   {" "}
                   <BoxSearch className="bg-black mr-2" color="#ffff" size={24} />
                   Logs
-                </a>
+          
+                </Link>
               </div>
               <div className="bg-black my-auto">
                 <UserMenu align="right" />

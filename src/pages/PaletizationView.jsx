@@ -314,7 +314,7 @@ function PaletizationView() {
     };
     dispatch(addEventToPaletizationLog(codeScannedEvent));
     dispatch(
-      createPallet("MX4FA00P", barcodePallet, totalMontadosValue, idAuto)
+      createPallet("MX4FA00P", orderSelected.aufnr, orderSelected.matnr, barcodePallet, totalMontadosValue, idAuto)
     );
 
     setTimeout(() => {
@@ -801,7 +801,7 @@ function PaletizationView() {
             <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 sm:w-2/3 sm:my-4">
               <div className="bg-white p-5">
                 <h3 className="bg-white text-md font-medium text-gray">
-                  Historico
+                  Histórico
                 </h3>
                 <div
                   className="bg-white text-sm text-black"
