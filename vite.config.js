@@ -8,7 +8,7 @@ export default defineConfig({
     postcss,
   },
   plugins: [react()],
-  base: '/',
+  base: './',
   resolve: {
     alias: [
       {
