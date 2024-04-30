@@ -25,6 +25,10 @@ function LogsItem(props) {
   const handleReprocess = () => {
     // Llama a la acción para eliminar el componente por su id
     dispatch(reprocessPallet(props.identifier));
+    setTimeout(() => {
+      props.fetchPallets();
+    }, 5000);
+   
     //dispatch(unmountComponent(props));
   };
 

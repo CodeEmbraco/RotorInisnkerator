@@ -201,6 +201,7 @@ function LogsTable() {
                   const rowNumber = index + 1;
                     return (
                       <LogsItem
+                      fetchPallets={fetchPallets}
                         key={component.id}
                         rowNumber={rowNumber}
                         id={component.id}
