@@ -19,7 +19,7 @@ function OrdersTableItem(props) {
           <button
             onClick={() => {
               const eventOrderSelected = {
-                text: "Orden " + props.id + " seleccionada",
+                text: "Órden " + props.id + " seleccionada",
                 timestamp: new Date().toISOString(),
               };
               console.log(props);

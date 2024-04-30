@@ -89,8 +89,8 @@ function LogsItem(props) {
               </div>
             ) : (
               <div className="flex text-center">
-                <InfoCircle className="mr-2" color="gray" size={20} /> Información:
-                <p className="text-primary">{props.sapStatus}</p>
+                <InfoCircle className="mr-2" color="gray" size={20} />
+                <p className="text-gray">{props.sapStatus}</p>
               </div>
             )}
           </div>
