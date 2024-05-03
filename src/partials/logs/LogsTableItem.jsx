@@ -21,14 +21,26 @@ function LogsItem(props) {
   const dispatch = useDispatch();
   const [dangerModalOpen, setDangerModalOpen] = useState(false);
   const palletSelected = useSelector(selectPallet);
+  const [isLoading, setIsloading] = useState(true);
+
+  const handleDispatch = async () => {
+    setIsLoading(true);
+    try {
+      await dispatch(reprocessPallet(props.identifier));
+    } catch (error) {
+      // Maneja los errores aquí si es necesario
+      console.log("Error al reprocesar el lote: " + error);
+    }
+    setIsLoading(false);
+  };
 
   const handleReprocess = () => {
     // Llama a la acción para eliminar el componente por su id
-    dispatch(reprocessPallet(props.identifier));
+    handleDispatch();
     setTimeout(() => {
       props.fetchPallets();
     }, 5000);
-   
+    
     //dispatch(unmountComponent(props));
   };
 
@@ -110,7 +122,26 @@ function LogsItem(props) {
             >
               Reprocesar
             </button>
-          ) : (
+          ) : isLoading ? (
+            <button
+                      
+                      className={
+                        "btn bg-primary text-white disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed shadow-none"
+                      }
+                      disabled={true}
+                    >
+                      <svg
+                        className="animate-spin bg-transparent w-4 h-4 fill-current shrink-0 mr-2"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M8 16a7.928 7.928 0 01-3.428-.77l.857-1.807A6.006 6.006 0 0014 8c0-3.309-2.691-6-6-6a6.006 6.006 0 00-5.422 8.572l-1.806.859A7.929 7.929 0 010 8c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z" />
+                      </svg>
+                      <span className="bg-transparent my-auto text-white font-semibold">
+                        Cargando...
+                      </span>
+                    </button>
+          ) : 
+          (
             <button
               aria-controls="danger-modal"
               onClick={(e) => {
@@ -121,7 +152,8 @@ function LogsItem(props) {
             >
               Reprocesar
             </button>
-          )}
+          )
+        }
         </td>
       </tr>
       {/* Danger Modal */}

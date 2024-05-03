@@ -49,7 +49,7 @@ function App() {
           }
         />
 
-<Route
+        <Route
           path="/logs"
           element={
             <PublicRoute>
@@ -72,13 +72,14 @@ function App() {
         reverseOrder={false}
         gutter={8}
         containerClassName="bg-transparent"
-        containerStyle={{ backgroundColor: "transparent", background: "transparent" }}
+        containerStyle={{
+          backgroundColor: "transparent",
+          background: "transparent",
+        }}
         toastOptions={{
           // Define default options
-          style: {
-           
-          },
-          
+          style: {},
+
           duration: 2000,
 
           // Default options for specific types
@@ -87,12 +88,7 @@ function App() {
           },
         }}
       >
-        {(t) => (
-          <ToastBar
-           
-            toast={t}
-          ></ToastBar>
-        )}
+        {(t) => <ToastBar toast={t}></ToastBar>}
       </Toaster>
     </>
   );
