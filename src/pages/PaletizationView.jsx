@@ -397,7 +397,7 @@ function PaletizationView() {
           <header>
             <div className="mt-8">
               <div className="flex items-center justify-between h-16 -mb-px">
-                <h3 className="text-black text-2xl capitalize font-semibold text-gray-400 tracking-tight">
+                <h3 className="text-black xl:text-2xl md:text-xl capitalize font-semibold text-gray-400 tracking-tight">
                   Paletización
                 </h3>
                 {/* Header: Right side */}
@@ -519,7 +519,7 @@ function PaletizationView() {
           <div className="max-w-full mx-4 py-0 sm:mx-auto">
             <div className="sm:flex sm:space-x-4">
               {Object.keys(orderSelected).length === 0 ? (
-                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
+                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
                   <div className="bg-white p-5">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -529,7 +529,7 @@ function PaletizationView() {
                             Pallet
                           </h3>
                         </div>
-                        <p className="bg-white text-3xl font-bold text-black">
+                        <p className="bg-white xl:text-3xl md:text-lg font-bold text-black">
                           {Object.keys(orderSelected).length === 0
                             ? "Selecciona órden"
                             : barcodePallet}
@@ -541,7 +541,7 @@ function PaletizationView() {
               ) : (
                 <button
                   onClick={handleClickNewPallet}
-                  className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4"
+                  className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4"
                 >
                   <div className="bg-white p-5">
                     <div className="sm:flex sm:items-start bg-white">
@@ -553,7 +553,7 @@ function PaletizationView() {
                           </h3>
                         </div>
                         <p
-                          className="bg-white text-3xl font-bold text-black"
+                          className="bg-white xl:text-3xl md:text-lg font-bold text-black"
                           onClick={handleClickNewPallet}
                         >
                           {Object.keys(orderSelected).length === 0
@@ -566,7 +566,7 @@ function PaletizationView() {
                 </button>
               )}
 
-              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/3 sm:my-4">
+              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -577,7 +577,7 @@ function PaletizationView() {
                         </h3>
                       </div>
 
-                      <p className="bg-white text-3xl font-bold text-black">
+                      <p className="bg-white xl:text-3xl md:text-lg font-bold text-black">
                         {Object.keys(orderSelected).length === 0
                           ? "Selecciona órden"
                           : orderSelected.aufnr}
@@ -587,7 +587,7 @@ function PaletizationView() {
                 </div>
               </section>
 
-              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/6 sm:my-4">
+              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -603,7 +603,7 @@ function PaletizationView() {
                         </h3>
                       </div>
 
-                      <div className="bg-white text-3xl font-bold text-black flex items-center">
+                      <div className="bg-white xl:text-3xl md:text-lg font-bold text-black flex items-center">
                         <input
                           className="w-36 border border-transparent focus:border-transparent focus:outline-none"
                           type="text"
@@ -629,7 +629,7 @@ function PaletizationView() {
                 </div>
               </section>
 
-              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/6 sm:my-4">
+              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -640,7 +640,7 @@ function PaletizationView() {
                         </h3>
                       </div>
 
-                      <div className="bg-white text-3xl font-bold text-black flex items-center">
+                      <div className="bg-white xl:text-3xl md:text-lg font-bold text-black flex items-center">
                         <input
                           className="w-36 border border-transparent focus:border-transparent focus:outline-none"
                           type="text"
@@ -686,7 +686,7 @@ function PaletizationView() {
                             Producto
                           </h3>
                         </div>
-                        <p className="bg-white text-3xl font-bold text-black">
+                        <p className="bg-white xl:text-3xl md:text-lg font-bold text-black">
                           {Object.keys(orderSelected).length === 0
                             ? "--------"
                             : orderSelected.matnr}
@@ -706,7 +706,7 @@ function PaletizationView() {
                             Planeado
                           </h3>
                         </div>
-                        <p className="bg-white text-3xl font-bold text-black">
+                        <p className="bg-white xl:text-3xl md:text-lg font-bold text-black">
                           {Object.keys(orderSelected).length === 0
                             ? "--------"
                             : `${orderSelected.qtdpl}`}
@@ -725,7 +725,7 @@ function PaletizationView() {
                             Apuntado
                           </h3>
                         </div>
-                        <p className="bg-white text-3xl font-bold text-black">
+                        <p className="bg-white xl:text-3xl md:text-lg font-bold text-black">
                           {Object.keys(orderSelected).length === 0
                             ? "--------"
                             : `${orderSelected.qtdpr}`}
@@ -760,14 +760,15 @@ function PaletizationView() {
             </div>
           </div>
 
-          <hr class="solid" />
-          <div className="mt-8 flex">
-            <h3 className="text-black text-2xl capitalize font-semibold text-gray-400 tracking-tight">
+          <hr class="solid hidden xl:block" />
+
+          <div className="xl:mt-8 flex">
+            <h3 className="text-black xl:text-2xl md:text-xl capitalize font-semibold text-gray-400 tracking-tight">
               Información adicional
             </h3>
           </div>
 
-          <div className="sm:flex sm:space-x-4 mt-4">
+          <div className="sm:flex sm:space-x-4 xl:mt-4">
             <section
               style={{ height: "245px", overflowY: "scroll" }}
               className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 w-full sm:w-1/3 sm:my-4"

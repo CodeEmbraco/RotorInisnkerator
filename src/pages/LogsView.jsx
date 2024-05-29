@@ -12,7 +12,7 @@ function LogsView(){
           <header>
             <div className="mt-8">
               <div className="flex items-center justify-between h-16 -mb-px">
-                <h3 className="text-black text-2xl capitalize font-semibold text-gray-400 tracking-tight">
+                <h3 className="text-black xl:text-2xl md:text-lg capitalize font-semibold text-gray-400 tracking-tight">
                   Logs
                 </h3>
                 </div>
