@@ -520,7 +520,7 @@ function PaletizationView() {
             <div className="sm:flex sm:space-x-4">
               {Object.keys(orderSelected).length === 0 ? (
                 <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
-                  <div className="bg-white p-5">
+                  <div className="bg-white p-3">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                         <div className="flex items-center">
@@ -543,7 +543,7 @@ function PaletizationView() {
                   onClick={handleClickNewPallet}
                   className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4"
                 >
-                  <div className="bg-white p-5">
+                  <div className="bg-white p-3">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                         <div className="flex items-center">
@@ -567,7 +567,7 @@ function PaletizationView() {
               )}
 
               <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
-                <div className="bg-white p-5">
+                <div className="bg-white p-3">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                       <div className="flex items-center">
@@ -588,7 +588,7 @@ function PaletizationView() {
               </section>
 
               <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
-                <div className="bg-white p-5">
+                <div className="bg-white p-3">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                       <div className="flex items-center">
@@ -630,7 +630,7 @@ function PaletizationView() {
               </section>
 
               <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden xl:mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
-                <div className="bg-white p-5">
+                <div className="bg-white p-3">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                       <div className="flex items-center">
@@ -672,7 +672,7 @@ function PaletizationView() {
             <div className="max-w-full mx-4 py-0 sm:mx-auto">
               <div className="sm:flex sm:space-x-4">
                 <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:my-4">
-                  <div className="bg-white p-5">
+                  <div className="bg-white p-3">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                         <div className="flex items-center">
@@ -697,7 +697,7 @@ function PaletizationView() {
                 </section>
 
                 <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 xl:my-4">
-                  <div className="bg-white p-5">
+                  <div className="bg-white p-3">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                         <div className="flex items-center">
@@ -716,7 +716,7 @@ function PaletizationView() {
                   </div>
                 </section>
                 <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 xl:my-4">
-                  <div className="bg-white p-5">
+                  <div className="bg-white p-3">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
                         <div className="flex items-center">
@@ -744,7 +744,7 @@ function PaletizationView() {
                 }}
                 className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:my-4 w-3/4"
               >
-                <div className="bg-white p-5">
+                <div className="bg-white p-3">
                   <h3 className="bg-white text-md font-medium text-gray">
                     Listado de componentes
                   </h3>
@@ -773,7 +773,7 @@ function PaletizationView() {
               style={{ height: "245px", overflowY: "scroll" }}
               className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 w-full sm:w-1/3 xl:my-4"
             >
-              <div className="bg-white p-5">
+              <div className="bg-white p-3">
                 <h3 className="bg-white text-md font-medium text-gray">
                   Log de eventos
                 </h3>
@@ -800,7 +800,7 @@ function PaletizationView() {
             </section>
 
             <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 sm:w-2/3 xl:my-4">
-              <div className="bg-white p-5">
+              <div className="bg-white p-3">
                 <h3 className="bg-white text-md font-medium text-gray">
                   Histórico
                 </h3>
