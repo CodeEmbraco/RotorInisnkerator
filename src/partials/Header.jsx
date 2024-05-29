@@ -43,12 +43,12 @@ function Header({
 
       )}
       <div className="w-screen relative sticky top-0 z-50">
-        <nav className="bg-black py-5">
+        <nav className="bg-black xl:py-5 md:py-3">
           <div className="bg-black container mx-auto flex">
             <img
               src={icons.nidecAllForDreams}
               alt="Logo"
-              className="w-24 bg-black mr-8"
+              className="xl:w-24 md:w-20 bg-black mr-8"
             />
             <div className="bg-black flex flex-grow justify-between">
               <div className="flex bg-black my-auto">
@@ -69,7 +69,7 @@ function Header({
                     }`}
                   >
                     <Notepad2
-                      className="bg-black mr-2"
+                      className="bg-black md:ml-3 mr-2"
                       color="#ffff"
                       size={24}
                     />
@@ -82,7 +82,7 @@ function Header({
                 >
                
                   {" "}
-                  <BoxSearch className="bg-black mr-2" color="#ffff" size={24} />
+                  <BoxSearch className="bg-black md:ml-3 mr-2" color="#ffff" size={24} />
                   Logs
           
                 </Link>
