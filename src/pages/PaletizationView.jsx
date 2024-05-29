@@ -763,12 +763,12 @@ function PaletizationView() {
           <hr class="solid hidden xl:block" />
 
           <div className="xl:mt-8 flex">
-            <h3 className="text-black xl:text-2xl md:text-xl capitalize font-semibold text-gray-400 tracking-tight">
+            <h3 className=" hidden xl:block text-black xl:text-2xl md:text-xl capitalize font-semibold text-gray-400 tracking-tight">
               Información adicional
             </h3>
           </div>
 
-          <div className="sm:flex sm:space-x-4 xl:mt-4 md:mt-2">
+          <div className="sm:flex sm:space-x-4 xl:mt-4 md:mt-0">
             <section
               style={{ height: "245px", overflowY: "scroll" }}
               className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 w-full sm:w-1/3 xl:my-4"
