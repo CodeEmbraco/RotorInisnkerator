@@ -392,10 +392,10 @@ function PaletizationView() {
 
   return (
     <>
-      <div className="px-4 sm:px-6 lg:px-8 py-2 w-full max-w-10xl mx-auto">
+      <div className="px-4 sm:px-6 lg:px-8 xl:py-2 md:py-0 w-full max-w-10xl mx-auto">
         <div className="max-w-full mx-4 py-0 sm:mx-auto sm:px-6 lg:px-4">
           <header>
-            <div className="mt-8">
+            <div className="xl:mt-8 md:mt-2">
               <div className="flex items-center justify-between h-16 -mb-px">
                 <h3 className="text-black xl:text-2xl md:text-xl capitalize font-semibold text-gray-400 tracking-tight">
                   Paletización
@@ -629,7 +629,7 @@ function PaletizationView() {
                 </div>
               </section>
 
-              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
+              <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden xl:mb-4 w-full xl:w-1/3 xl:my-4 md:w-1/4 md:my-4">
                 <div className="bg-white p-5">
                   <div className="sm:flex sm:items-start bg-white">
                     <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -671,7 +671,7 @@ function PaletizationView() {
             </div>
             <div className="max-w-full mx-4 py-0 sm:mx-auto">
               <div className="sm:flex sm:space-x-4">
-                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:my-4">
+                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:my-4">
                   <div className="bg-white p-5">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -696,7 +696,7 @@ function PaletizationView() {
                   </div>
                 </section>
 
-                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 sm:my-4">
+                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 xl:my-4">
                   <div className="bg-white p-5">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -715,7 +715,7 @@ function PaletizationView() {
                     </div>
                   </div>
                 </section>
-                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 sm:my-4">
+                <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:w-1/4 xl:my-4">
                   <div className="bg-white p-5">
                     <div className="sm:flex sm:items-start bg-white">
                       <div className="bg-white text-center sm:mt-0 sm:ml-2 sm:text-left">
@@ -742,7 +742,7 @@ function PaletizationView() {
                   minHeight: "200px",
                   overflowY: "scroll",
                 }}
-                className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full sm:my-4 w-3/4"
+                className="inline-block align-bottom rounded-lg border border-slate-200 text-left overflow-hidden mb-4 w-full xl:my-4 w-3/4"
               >
                 <div className="bg-white p-5">
                   <h3 className="bg-white text-md font-medium text-gray">
@@ -768,10 +768,10 @@ function PaletizationView() {
             </h3>
           </div>
 
-          <div className="sm:flex sm:space-x-4 xl:mt-4">
+          <div className="sm:flex sm:space-x-4 xl:mt-4 md:mt-2">
             <section
               style={{ height: "245px", overflowY: "scroll" }}
-              className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 w-full sm:w-1/3 sm:my-4"
+              className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 w-full sm:w-1/3 xl:my-4"
             >
               <div className="bg-white p-5">
                 <h3 className="bg-white text-md font-medium text-gray">
@@ -799,7 +799,7 @@ function PaletizationView() {
               </div>
             </section>
 
-            <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 sm:w-2/3 sm:my-4">
+            <section className="inline-block align-bottom rounded-lg border border-slate-200 text-left mb-4 sm:w-2/3 xl:my-4">
               <div className="bg-white p-5">
                 <h3 className="bg-white text-md font-medium text-gray">
                   Histórico
