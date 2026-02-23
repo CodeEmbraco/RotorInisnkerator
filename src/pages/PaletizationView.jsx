@@ -73,7 +73,7 @@ function PaletizationView() {
   const [dangerEditQtyPalletModalOpen, setDangerEditQtyPalletModalOpen] =
     useState(false);
   const [confirmEditQtyPallet, setConfirmEditQtyPallet] = useState(false);
-  const [value, setValue] = useState("1452");
+  const [value, setValue] = useState("616");
   const [editable, setEditable] = useState(false); // Cambié el estado inicial a 'false'
   const inputRef = useRef(null);
 
@@ -299,7 +299,7 @@ function PaletizationView() {
     console.log("Handle new step");
     setBarcodePallet("Nuevo pallet");
     setBarcodeProduct("Escanea producto");
-    setValue("1452");
+    setValue("616");
     setTotalMontadosValue("");
     dispatch(setGlobalStatus(""));
     dispatch(setTestResults([]));
@@ -314,7 +314,7 @@ function PaletizationView() {
     };
     dispatch(addEventToPaletizationLog(codeScannedEvent));
     dispatch(
-      createPallet("MX4FA00P", orderSelected.aufnr, orderSelected.matnr, barcodePallet, totalMontadosValue, idAuto)
+      createPallet("MX8RO040", orderSelected.aufnr, orderSelected.matnr, barcodePallet, totalMontadosValue, idAuto)
     );
 
     setTimeout(() => {
@@ -847,7 +847,7 @@ function PaletizationView() {
                 <div className="space-y-2">
                   <p>
                     ¿Estás seguro que deseas cambiar la cantidad estándar de unidades por Pallet? La
-                    cantidad estándar es 1452, si deseas proceder da click en "Si, editar"
+                    cantidad estándar es 616, si deseas proceder da click en "Si, editar"
                   </p>
                 </div>
               </div>
@@ -910,7 +910,7 @@ function PaletizationView() {
               <div className="text-sm text-black mb-10">
                 <div className="space-y-2">
                   <p>
-                  El total montado difiere de la cantidad estándar definida. La cantidad estándar por pallet son 1452 unidades. ¿Deseas confirmar el cambio y montar solo {totalMontadosValue} unidades? Haz clic en 'Sí' para proceder.
+                  El total montado difiere de la cantidad estándar definida. La cantidad estándar por pallet son 616 unidades. ¿Deseas confirmar el cambio y montar solo {totalMontadosValue} unidades? Haz clic en 'Sí' para proceder.
                   </p>
                 </div>
               </div>

@@ -131,7 +131,7 @@ export const getLastPallet = () => {
   // };
   // dispatch(addEvent(startFetchOrders));
   return axios
-    .get('http://10.13.225.20:8004/api/v1/paletization/pallets/?workstation=MX4FA00P')
+    .get('http://10.13.225.20:8004/api/v1/paletization/pallets/?workstation=MX8RO040')
     .then((response) => {
       if (response.status === 200) {
         //dispatch(setLoading(false));
@@ -139,7 +139,7 @@ export const getLastPallet = () => {
         console.log(response.data);
         const objectResponse = response.data;
         const id = objectResponse.id_auto + 1; // Suma uno al id
-        const nuevoIdentificador = "WET" + id.toString().padStart(4, "0");
+        const nuevoIdentificador = "ISE" + id.toString().padStart(4, "0");
         return {nuevoIdentificador, id};
         // dispatch(setPallet(response.data));
       }
@@ -218,7 +218,7 @@ export const createPallet = (workstation, order, product, identifier, quantity, 
     // };
     // dispatch(addEvent(startFetchOrders));
     axios
-     .get(`http://10.13.225.20:8004/api/v1/paletization/logs/?workstation=MX4FA00P&page=1&page_size=10`)
+     .get(`http://10.13.225.20:8004/api/v1/paletization/logs/?workstation=MX8RO040&page=1&page_size=10`)
      .then((response) => {
         if (response.status === 200) {
           //dispatch(setLoading(false));
@@ -321,7 +321,7 @@ export const createPallet = (workstation, order, product, identifier, quantity, 
     const currentTime = currentDatetime.toLocaleTimeString('en-US', { hour12: false });
     
     const xmlData = {
-      IArbpl: "MX4FA00P",
+      IArbpl: "MX8RO040",
       IAufnr: orderSelected.aufnr,
       IMatnrDestino: orderSelected.matnr,
       ICharg: pallet,

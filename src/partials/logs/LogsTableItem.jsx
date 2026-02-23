@@ -21,7 +21,7 @@ function LogsItem(props) {
   const dispatch = useDispatch();
   const [dangerModalOpen, setDangerModalOpen] = useState(false);
   const palletSelected = useSelector(selectPallet);
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsloading] = useState(false);
 
   const handleDispatch = async () => {
     setIsLoading(true);
