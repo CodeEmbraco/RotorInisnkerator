@@ -61,6 +61,7 @@ import {
 } from "../store/slice/palletsSlice";
 import LabelPrinting from "../partials/genealogy/LabelPrinting";
 import ComponentsTable from "../partials/paletization/ComponentsTable";
+import BrowserPrintComponent from "../printerComponent";
 
 import {
   notifyPalletScanned,
@@ -98,8 +99,6 @@ function PaletizationView() {
     }
   }, [confirmEditQtyPallet]);
 
-
-
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       setEditable(false); // Bloquea el input si se presiona la tecla Enter
@@ -127,7 +126,7 @@ function PaletizationView() {
 
   const handleKeyPressMontados = (event) => {
     if (event.key === "Enter") {
-      if(value != totalMontadosValue){
+      if (value != totalMontadosValue) {
         setDangerDiffValues(true);
       }
       setTotalMontadosEditable(false); // Bloquea el input si se presiona la tecla Enter
@@ -135,7 +134,7 @@ function PaletizationView() {
   };
 
   const handleSaveMontados = () => {
-    if(value != totalMontadosValue){
+    if (value != totalMontadosValue) {
       setDangerDiffValues(true);
     }
     setTotalMontadosEditable(false); // Bloquea el input si se presiona la tecla Enter
@@ -314,7 +313,14 @@ function PaletizationView() {
     };
     dispatch(addEventToPaletizationLog(codeScannedEvent));
     dispatch(
-      createPallet("MX8RO040", orderSelected.aufnr, orderSelected.matnr, barcodePallet, totalMontadosValue, idAuto)
+      createPallet(
+        "MX8RO040",
+        orderSelected.aufnr,
+        orderSelected.matnr,
+        barcodePallet,
+        totalMontadosValue,
+        idAuto,
+      ),
     );
 
     setTimeout(() => {
@@ -418,51 +424,29 @@ function PaletizationView() {
                     </button>
                   )}
 
-                  <ReactToPrint
-                    trigger={() => (
-                      <button
-                        onClick={(e) => {}}
-                        className={
-                          totalMontadosValue.length > 0
-                            ? "w-64 h-12 bg-primary rounded text-white text-base flex justify-center hover:bg-green-500"
-                            : "w-64 h-12 bg-secondary rounded text-black text-base flex justify-center hover:text-white disabled:pointer-events-none"
-                        }
-                        disabled={totalMontadosValue.length === 0}
-                      >
-                        <Barcode
-                          className="mr-2 my-auto bg-transparent"
-                          color="#ffff"
-                          size={20}
-                        />
-                        <span className="bg-transparent my-auto text-white font-semibold hover:bg-green-500">
-                          Imprimir etiqueta
-                        </span>
-                      </button>
-                    )}
-                    content={() => labelRef.current}
+                  <BrowserPrintComponent
+                    barcodeProduct={barcodeProduct}
+                    pallet={
+                      barcodePallet != "Nuevo pallet"
+                        ? barcodePallet
+                        : "Undefined"
+                    }
+                    qty={
+                      totalMontadosValue.length > 0
+                        ? totalMontadosValue
+                        : "Undefined"
+                    }
+                    order={
+                      Object.keys(orderSelected).length != 0
+                        ? orderSelected.aufnr
+                        : "Undefined"
+                    }
+                    product={
+                      Object.keys(orderSelected).length != 0
+                        ? orderSelected.matnr
+                        : "Undefined"
+                    }
                   />
-
-                  <div style={{ display: "none" }}>
-                    <LabelPrinting
-                      ref={labelRef}
-                      pallet={
-                        barcodePallet != "Nuevo pallet"
-                          ? barcodePallet
-                          : "Undefined"
-                      }
-                      qty={totalMontadosValue.length > 0 ? totalMontadosValue : "Undefined"}
-                      order={
-                        Object.keys(orderSelected).length != 0
-                          ? orderSelected.aufnr
-                          : "Undefined"
-                      }
-                      product={
-                        Object.keys(orderSelected).length != 0
-                          ? orderSelected.matnr
-                          : "Undefined"
-                      }
-                    />
-                  </div>
 
                   {totalMontadosValue.length == 0 &&
                   barcodePallet == "Nuevo pallet" ? null : isLoading ? (
@@ -846,8 +830,9 @@ function PaletizationView() {
               <div className="text-sm text-black mb-10">
                 <div className="space-y-2">
                   <p>
-                    ¿Estás seguro que deseas cambiar la cantidad estándar de unidades por Pallet? La
-                    cantidad estándar es 616, si deseas proceder da click en "Si, editar"
+                    ¿Estás seguro que deseas cambiar la cantidad estándar de
+                    unidades por Pallet? La cantidad estándar es 616, si deseas
+                    proceder da click en "Si, editar"
                   </p>
                 </div>
               </div>
@@ -910,7 +895,10 @@ function PaletizationView() {
               <div className="text-sm text-black mb-10">
                 <div className="space-y-2">
                   <p>
-                  El total montado difiere de la cantidad estándar definida. La cantidad estándar por pallet son 616 unidades. ¿Deseas confirmar el cambio y montar solo {totalMontadosValue} unidades? Haz clic en 'Sí' para proceder.
+                    El total montado difiere de la cantidad estándar definida.
+                    La cantidad estándar por pallet son 616 unidades. ¿Deseas
+                    confirmar el cambio y montar solo {totalMontadosValue}{" "}
+                    unidades? Haz clic en 'Sí' para proceder.
                   </p>
                 </div>
               </div>
