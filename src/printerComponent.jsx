@@ -1,39 +1,8 @@
-import Button from "@material-ui/core/Button";
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Print_Service } from "./printService";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-    flexWrap: "wrap",
-    "& button": {
-      flexBasis: "70%",
-      margin: "2%",
-      backgroundColor: "rgb(0 155 74 / var(--tw-bg-opacity))",
-      color: "white",
-      "&:hover": {
-        backgroundColor: "rgb(0 120 56 / var(--tw-bg-opacity))",
-      },
-    },
-  },
-  container: {
-    display: "flex",
-    flexWrap: "wrap",
-  },
-  formControl: {
-    marginTop: "5%",
-    marginBottom: "7%",
-    minWidth: 140,
-  },
-}));
+import { Barcode } from "iconsax-react";
 
 export default function PrinterComponent({
   barcodeProduct,
@@ -42,7 +11,6 @@ export default function PrinterComponent({
   pallet,
   order,
 }) {
-  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [deviceList, setDevices] = React.useState([]);
   const [printer, setPrinter] = React.useState(null);
@@ -54,12 +22,16 @@ export default function PrinterComponent({
       },
       (err) => {
         console.log(err);
-      }
+      },
     );
   }, []);
 
   const handleChange = (event) => {
-    setPrinter(event.target.value);
+    const selectedName = event.target.value;
+    const selectedDevice = deviceList.find(
+      (device) => device.name === selectedName,
+    );
+    setPrinter(selectedDevice || null);
   };
 
   const writeIframe = (str) => {
@@ -94,7 +66,7 @@ export default function PrinterComponent({
     const selectedAccessoriesJson = JSON.parse(selectedAccessories);
     if (selectedAccessoriesJson == null)
       alert(
-        "No es posible generar etiqueta de Accesorios, el producto no tiene relacion"
+        "No es posible generar etiqueta de Accesorios, el producto no tiene relacion",
       );
     else {
       console.log(selectedAccessoriesJson[0].matnr);
@@ -169,7 +141,7 @@ export default function PrinterComponent({
     axios
       .post(
         "http://em10vs0010.embraco.com:8002/api/v1/paletization/thermo/get_qr/",
-        serialNo
+        serialNo,
       )
       .then((response) => {
         if (response.status === 201) {
@@ -266,10 +238,11 @@ export default function PrinterComponent({
       "5180758A": "81202A",
       "5180759A": "81202A",
       "5179611H": "81202K",
-      "5178830B": "81202K"
-    }
+      "5178830B": "81202K",
+    };
 
-    const clientPartNumber = parts_number_client_number[product.toString()] || "";
+    const clientPartNumber =
+      parts_number_client_number[product.toString()] || "";
     const productValue = product || "";
     const quantity = qty || "";
     const batchOrder = pallet && order ? `${pallet}-${order}` : "";
@@ -331,53 +304,41 @@ export default function PrinterComponent({
 
   return (
     <>
-      <FormControl className={classes.formControl}>
-        <InputLabel id="demo-dialog-select-label">Impresoras</InputLabel>
-        <Select
-          labelId="demo-dialog-select-label"
-          id="demo-dialog-select"
-          value={printer}
+      <div className="mt-6 mb-6 min-w-[150px]">
+        <select
+          id="printer-select"
+          className="block w-full rounded border border-slate-200 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 disabled:bg-gray-100"
+          value={printer ? printer.name : ""}
           onChange={handleChange}
-          input={<Input />}
-          MenuProps={{
-            getContentAnchorEl: null,
-            anchorOrigin: {
-              vertical: "bottom",
-              horizontal: "left",
-            },
-            transformOrigin: {
-              vertical: "top",
-              horizontal: "left",
-            },
-            PaperProps: {
-              style: {
-                color: "black",
-              },
-            },
-          }}
         >
+          <option value="" disabled>
+            Selecciona una impresora
+          </option>
           {deviceList.map((device, indx) => (
-            <MenuItem
-              value={device}
-              key={indx}
-              style={{ color: "black" }} // Establece el color del texto en negro
-            >
+            <option value={device.name} key={indx}>
               {device.name}
-            </MenuItem>
+            </option>
           ))}
-        </Select>
-      </FormControl>
-      <div className={classes.root}>
-        <Button
+        </select>
+      </div>
+      <div className="flex flex-wrap">
+        <button
+          type="button"
           onClick={handlePrintZPLLabel}
-          className="w-64 h-12 rounded text-base flex justify-center hover:bg-green-500"
-          variant="contained"
+          className="w-64 h-12 bg-primary rounded text-white text-base flex items-center justify-center font-semibold hover:bg-green-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           disabled={!printer}
         >
-          Imprimir etiqueta
-        </Button>
+          <Barcode
+            className="mr-2 my-auto bg-transparent"
+            color="#ffff"
+            size={20}
+          />
+          <span className="bg-transparent my-auto text-white font-semibold hover:bg-green-500">
+            Imprimir etiqueta
+          </span>{" "}
+        </button>
       </div>
-      <div className={classes.root}></div>
+      <div className="flex flex-wrap"></div>
     </>
   );
 }
