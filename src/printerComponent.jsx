@@ -10,9 +10,6 @@ import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Print_Service } from "./printService";
 
-import { selectBarcodeProduct } from "./store/slice/productSlice";
-import { selectGlobalStatus } from "./store/slice/testResultSlice";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
