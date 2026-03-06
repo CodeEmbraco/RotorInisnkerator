@@ -285,7 +285,7 @@ export default function PrinterComponent({
 ^BY3,2,90
 ^FO450,800^BCB,90,N,N,N^FD${quantity}^FS
 
-^BY3,2,80
+^BY2,2,80
 ^FO450,100^BCB,80,N,N,N^FD${batchOrder}^FS
 
 ^CF0,35
