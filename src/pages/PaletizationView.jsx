@@ -424,6 +424,7 @@ function PaletizationView() {
                     </button>
                   )}
 
+                  <div>
                   <BrowserPrintComponent
                     barcodeProduct={barcodeProduct}
                     pallet={
@@ -447,6 +448,7 @@ function PaletizationView() {
                         : "Undefined"
                     }
                   />
+                  </div>
 
                   {totalMontadosValue.length == 0 &&
                   barcodePallet == "Nuevo pallet" ? null : isLoading ? (
