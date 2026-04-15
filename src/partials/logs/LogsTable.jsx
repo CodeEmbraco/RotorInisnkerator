@@ -27,7 +27,7 @@ function LogsTable() {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    fetchPallets("&workstation=MX8RO040");
+    fetchPallets("&workstation=MX8RS040");
   }, [currentPage]);
 
   const fetchPallets = async (queryParams) => {
@@ -61,9 +61,9 @@ function LogsTable() {
     setCurrentPage(1);
     // Hacer la solicitud a la API con los parámetros de filtro
     if(sapSuccess === "none" || sapSuccess === "all") {
-      fetchPallets(`&workstation=MX8RO040`);
+      fetchPallets(`&workstation=MX8RS040`);
     } else {
-      fetchPallets(`&workstation=MX8RO040&sap_success=${sapSuccess}`);
+      fetchPallets(`&workstation=MX8RS040&sap_success=${sapSuccess}`);
     }
   };
   const orders = [
