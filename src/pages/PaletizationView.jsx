@@ -314,7 +314,7 @@ function PaletizationView() {
     dispatch(addEventToPaletizationLog(codeScannedEvent));
     dispatch(
       createPallet(
-        "MX8RO040",
+        "MX8RS040",
         orderSelected.aufnr,
         orderSelected.matnr,
         barcodePallet,
