@@ -131,7 +131,7 @@ export const getLastPallet = () => {
   // };
   // dispatch(addEvent(startFetchOrders));
   return axios
-    .get('http://10.13.225.20:8004/api/v1/paletization/pallets/?workstation=MX8RS040')
+    .get('http://10.13.225.20:8004/api/v1/paletization/pallets/?workstation=MX8RO040')
     .then((response) => {
       if (response.status === 200) {
         //dispatch(setLoading(false));
@@ -218,7 +218,7 @@ export const createPallet = (workstation, order, product, identifier, quantity, 
     // };
     // dispatch(addEvent(startFetchOrders));
     axios
-     .get(`http://10.13.225.20:8004/api/v1/paletization/logs/?workstation=MX8RS040&page=1&page_size=10`)
+     .get(`http://10.13.225.20:8004/api/v1/paletization/logs/?workstation=MX8RO040&page=1&page_size=10`)
      .then((response) => {
         if (response.status === 200) {
           //dispatch(setLoading(false));
@@ -321,7 +321,7 @@ export const createPallet = (workstation, order, product, identifier, quantity, 
     const currentTime = currentDatetime.toLocaleTimeString('en-US', { hour12: false });
     
     const xmlData = {
-      IArbpl: "MX8RS040",
+      IArbpl: "MX8RO040",
       IAufnr: orderSelected.aufnr,
       IMatnrDestino: orderSelected.matnr,
       ICharg: pallet,
