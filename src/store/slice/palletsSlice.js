@@ -280,9 +280,10 @@ export const createPallet = (workstation, order, product, identifier, quantity, 
   export const reprocessPallet = (palletIdentifier) => (dispatch) => {
     // Realiza una solicitud DELETE para desmontar el componente
     const data = {
-      pallet: palletIdentifier
+      pallet: palletIdentifier,
+      line_id: 'MX8RO040'
     }
-    axios
+    return axios
       .post(`http://10.13.225.20:8004/api/v1/paletization/reprocess/`, data)
       .then((response) => {
         

@@ -243,7 +243,8 @@ export default function PrinterComponent({
 
     const clientPartNumber =
       parts_number_client_number[product.toString()] || "";
-    const productValue = product || "";
+    const productValue = product ? product.toString().slice(2) : "";
+    const orderValue = order ? order.toString().replace(/^0+/, "") || "0" : "";
     const quantity = qty || "";
     const dateLabel = new Date().toLocaleDateString("en-US", {
       year: "numeric",
@@ -278,7 +279,7 @@ export default function PrinterComponent({
 ^CF0,50
 ^FO50,360^FD${quantity}^FS
 ^FO380,360^FD${pallet}^FS
-^FO730,360^FD${order}^FS
+^FO730,360^FD${orderValue}^FS
 
 ^BY3,2,90
 ^FO60,420^BCN,90,N,N,N^FD${quantity}^FS
@@ -287,7 +288,7 @@ export default function PrinterComponent({
 ^FO310,420^BCN,90,N,N,N^FD${pallet}^FS
 
 ^BY3,2,90
-^FO710,420^BCN,90,N,N,N^FD${order}^FS
+^FO710,420^BCN,90,N,N,N^FD${orderValue}^FS
 
 
 ^CF0,35

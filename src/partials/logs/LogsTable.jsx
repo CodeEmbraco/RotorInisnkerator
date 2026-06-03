@@ -30,7 +30,7 @@ function LogsTable() {
     fetchPallets("&workstation=MX8RO040");
   }, [currentPage]);
 
-  const fetchPallets = async (queryParams) => {
+  const fetchPallets = async (queryParams = "&workstation=MX8RO040") => {
     try {
       const response = await fetch(
         `http://10.13.225.20:8004/api/v1/paletization/logs/?page=${currentPage}&page_size=10${queryParams}`
