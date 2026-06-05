@@ -239,6 +239,7 @@ export default function PrinterComponent({
       "5180759A": "81202A",
       "5179611H": "81202K",
       "5178830B": "81202K",
+      "5180759B": "81202C",
     };
 
     const clientPartNumber =
