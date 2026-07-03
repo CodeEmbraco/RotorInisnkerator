@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -17,21 +17,51 @@ import {
 import ModalBlank from "../../components/ModalBlank";
 import { Check, Clock, InfoCircle, Verify, Warning2 } from "iconsax-react";
 
+// Contraseña de administrador requerida para poder reprocesar un lote desde Logs.
+const REPROCESS_PASSWORD = "Nidec2026";
+
 function LogsItem(props) {
   const dispatch = useDispatch();
   const [dangerModalOpen, setDangerModalOpen] = useState(false);
   const palletSelected = useSelector(selectPallet);
   const [isLoading, setIsLoading] = useState(false);
+  const inFlight = useRef(false); // evita un segundo reproceso en el mismo tick
+
+  // Bloqueo por contraseña previo a la confirmación de reproceso
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+
+  const openPasswordModal = () => {
+    setPasswordInput("");
+    setPasswordError(false);
+    setPasswordModalOpen(true);
+  };
+
+  const handleValidatePassword = () => {
+    if (passwordInput === REPROCESS_PASSWORD) {
+      setPasswordError(false);
+      setPasswordInput("");
+      setPasswordModalOpen(false);
+      setDangerModalOpen(true); // contraseña correcta: mostrar confirmación
+    } else {
+      setPasswordError(true);
+    }
+  };
 
   const handleDispatch = async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setIsLoading(true);
     try {
       await dispatch(reprocessPallet(props.identifier));
     } catch (error) {
       // Maneja los errores aquí si es necesario
       console.log("Error al reprocesar el lote: " + error);
+    } finally {
+      setIsLoading(false);
+      inFlight.current = false;
     }
-    setIsLoading(false);
   };
 
   const handleReprocess = () => {
@@ -139,10 +169,10 @@ function LogsItem(props) {
             </button>
           ) : (
             <button
-              aria-controls="danger-modal"
+              aria-controls="password-modal"
               onClick={(e) => {
                 e.stopPropagation();
-                setDangerModalOpen(true);
+                openPasswordModal();
               }}
               className="text-center font-semibold text-primary w-full"
             >
@@ -151,6 +181,89 @@ function LogsItem(props) {
           )}
         </td>
       </tr>
+      {/* Password Modal (bloqueo previo al reproceso) */}
+      <div className="">
+        <ModalBlank
+          id="password-modal"
+          modalOpen={passwordModalOpen}
+          setModalOpen={setPasswordModalOpen}
+        >
+          <div className="p-5 flex space-x-4">
+            {/* Icon */}
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-secondary">
+              <svg
+                className="w-4 h-4 shrink-0 fill-current text-primary"
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm1-3H7V4h2v5z" />
+              </svg>
+            </div>
+            {/* Content */}
+            <div className="w-full">
+              {/* Modal header */}
+              <div className="mb-2">
+                <div className="text-lg font-semibold text-slate-800">
+                  Contraseña requerida
+                </div>
+              </div>
+              {/* Modal content */}
+              <div className="text-sm mb-6">
+                <div className="space-y-2">
+                  <p className="text-black">
+                    Ingresa la contraseña de administrador para reprocesar el lote:{" "}
+                    {props.identifier}.
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <input
+                    type="password"
+                    autoFocus
+                    value={passwordInput}
+                    onChange={(e) => {
+                      setPasswordInput(e.target.value);
+                      if (passwordError) setPasswordError(false);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleValidatePassword();
+                      }
+                    }}
+                    className="form-input w-full h-12"
+                    placeholder="Contraseña"
+                  />
+                  {passwordError && (
+                    <p className="text-sm text-red-500 mt-2">
+                      Contraseña incorrecta.
+                    </p>
+                  )}
+                </div>
+              </div>
+              {/* Modal footer */}
+              <div className="flex flex-wrap justify-end space-x-2">
+                <button
+                  className="btn-sm border-slate-200 hover:border-slate-300 text-slate-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPasswordModalOpen(false);
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="btn-sm bg-primary hover:bg-primary-500 text-white"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleValidatePassword();
+                  }}
+                >
+                  Continuar
+                </button>
+              </div>
+            </div>
+          </div>
+        </ModalBlank>
+      </div>
       {/* Danger Modal */}
       <div className="">
         {/* Start */}
