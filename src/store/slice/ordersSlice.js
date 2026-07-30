@@ -4,6 +4,7 @@ import { endpointsCodes } from './endpointCodes';
 
 import { selectEventsLog, addEvent, addEventToPaletizationLog } from './eventsLogSlice';
 import { notifiyGettingOrderDetail, notifyError, notifyOrderDetailSuccess } from '../../partials/paletization/Toasts';
+import { isMonthEndLocked, getMonthEndSnapshot } from '../../utils/monthEndLock';
 
 import { toast } from 'react-hot-toast';
 import { setOrderSelected } from './orderSelectedSlice';
@@ -56,17 +57,20 @@ export const selectOrderDetail = (state) => state.openOrders.orderDetail;
 export default openOrdersSlice.reducer;
 
 export const getOpenOrdersList = () => (dispatch) => {
-    //dispatch(setLoading(true));
-    // const startFetchOrders = {
-    //   text: 'Obteniendo órdenes desde SAP',
-    //   timestamp: new Date().toISOString(),
-    // };
-    // dispatch(addEvent(startFetchOrders));
+    // Cierre de mes activo: no consultar SAP, usar el snapshot congelado.
+    if (isMonthEndLocked()) {
+      dispatch(setOpenOrdersList(getMonthEndSnapshot()));
+      return;
+    }
+    dispatch(setLoading(true));
     axios
-      .get('http://10.13.225.20:8001/api/v1/orders')
+      // _t evita que el navegador sirva una respuesta cacheada: sin esto, al
+      // reactivar el cierre de mes se seguía viendo el listado congelado
+      // hasta recargar la página.
+      .get('http://10.13.225.20:8001/api/v1/orders', { params: { _t: Date.now() } })
       .then((response) => {
+        dispatch(setLoading(false));
         if (response.status === 200) {
-          //dispatch(setLoading(false));
           const filtered_orders = response.data.filter(elemento => elemento.arbpl === "MX8RO040");
           console.log(filtered_orders);
           dispatch(setOpenOrdersList(filtered_orders));
@@ -75,6 +79,7 @@ export const getOpenOrdersList = () => (dispatch) => {
         }
       })
       .catch((error) => {
+        dispatch(setLoading(false));
         notifyError("Ocurrió un error al obtener las órdenes desde SAP.")
         endpointsCodes(error, dispatch, setNotFound)});
   };
