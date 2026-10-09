@@ -70,7 +70,7 @@ import {
 
 // Contraseña de administrador requerida para modificar manualmente la
 // cantidad de piezas del pallet.
-const PALLET_QTY_PASSWORD = "Nidec2026";
+const PALLET_QTY_PASSWORD = "embraco123";
 
 function PaletizationView() {
   const [dangerDiffValues, setDangerDiffValues] = useState(false);
