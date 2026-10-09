@@ -68,15 +68,22 @@ import {
   notifyProductScanned,
 } from "../partials/paletization/Toasts";
 
+// Contraseña de administrador requerida para modificar manualmente la
+// cantidad de piezas del pallet.
+const PALLET_QTY_PASSWORD = "Nidec2026";
+
 function PaletizationView() {
   const [dangerDiffValues, setDangerDiffValues] = useState(false);
   const [confirmEditDiffValues, setConfirmEditDiffValues] = useState(false);
-  const [dangerEditQtyPalletModalOpen, setDangerEditQtyPalletModalOpen] =
-    useState(false);
   const [confirmEditQtyPallet, setConfirmEditQtyPallet] = useState(false);
   const [value, setValue] = useState("616");
   const [editable, setEditable] = useState(false); // Cambié el estado inicial a 'false'
   const inputRef = useRef(null);
+
+  // Bloqueo por contraseña previo a editar la cantidad del pallet
+  const [qtyPasswordModalOpen, setQtyPasswordModalOpen] = useState(false);
+  const [qtyPasswordInput, setQtyPasswordInput] = useState("");
+  const [qtyPasswordError, setQtyPasswordError] = useState(false);
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -84,7 +91,20 @@ function PaletizationView() {
 
   const toggleEditable = (e) => {
     e.stopPropagation();
-    setDangerEditQtyPalletModalOpen(true);
+    setQtyPasswordInput("");
+    setQtyPasswordError(false);
+    setQtyPasswordModalOpen(true);
+  };
+
+  const handleValidateQtyPassword = () => {
+    if (qtyPasswordInput !== PALLET_QTY_PASSWORD) {
+      setQtyPasswordError(true);
+      return;
+    }
+    setQtyPasswordError(false);
+    setQtyPasswordInput("");
+    setQtyPasswordModalOpen(false);
+    setConfirmEditQtyPallet(true);
   };
 
   useEffect(() => {
@@ -803,37 +823,62 @@ function PaletizationView() {
       <div className="m-1.5">
         {/* Start */}
 
+        {/* Password Modal (bloqueo previo a editar la cantidad del pallet) */}
         <ModalBlank
-          id="danger-modal"
-          modalOpen={dangerEditQtyPalletModalOpen}
-          setModalOpen={setDangerEditQtyPalletModalOpen}
+          id="qty-password-modal"
+          modalOpen={qtyPasswordModalOpen}
+          setModalOpen={setQtyPasswordModalOpen}
         >
           <div className="p-5 flex space-x-4">
             {/* Icon */}
-            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-rose-100">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-secondary">
               <svg
-                className="w-4 h-4 shrink-0 fill-current text-rose-500"
+                className="w-4 h-4 shrink-0 fill-current text-primary"
                 viewBox="0 0 16 16"
               >
                 <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm1-3H7V4h2v5z" />
               </svg>
             </div>
             {/* Content */}
-            <div>
+            <div className="w-full">
               {/* Modal header */}
               <div className="mb-2">
                 <div className="text-lg font-semibold text-slate-800">
-                  Editar Cantidad pallet
+                  Contraseña requerida
                 </div>
               </div>
               {/* Modal content */}
-              <div className="text-sm text-black mb-10">
+              <div className="text-sm mb-6">
                 <div className="space-y-2">
-                  <p>
+                  <p className="text-black">
                     ¿Estás seguro que deseas cambiar la cantidad estándar de
-                    unidades por Pallet? La cantidad estándar es 616, si deseas
-                    proceder da click en "Si, editar"
+                    unidades por Pallet? La cantidad estándar es 616. Ingresa
+                    la contraseña de administrador para continuar.
                   </p>
+                </div>
+                <div className="mt-4">
+                  <input
+                    type="password"
+                    autoFocus
+                    value={qtyPasswordInput}
+                    onChange={(e) => {
+                      setQtyPasswordInput(e.target.value);
+                      if (qtyPasswordError) setQtyPasswordError(false);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleValidateQtyPassword();
+                      }
+                    }}
+                    className="form-input w-full h-12"
+                    placeholder="Contraseña"
+                  />
+                  {qtyPasswordError && (
+                    <p className="text-sm text-red-500 mt-2">
+                      Contraseña incorrecta.
+                    </p>
+                  )}
                 </div>
               </div>
               {/* Modal footer */}
@@ -842,21 +887,19 @@ function PaletizationView() {
                   className="btn-sm border-slate-200 hover:border-slate-300 text-slate-600"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setDangerEditQtyPalletModalOpen(false);
-                    setConfirmEditQtyPallet(false);
+                    setQtyPasswordModalOpen(false);
                   }}
                 >
                   Cancelar
                 </button>
                 <button
-                  className="btn-sm bg-rose-500 hover:bg-rose-600 text-white"
+                  className="btn-sm bg-primary hover:bg-primary-500 text-white"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setConfirmEditQtyPallet(true);
-                    setDangerEditQtyPalletModalOpen(false);
+                    handleValidateQtyPassword();
                   }}
                 >
-                  Si, editar
+                  Continuar
                 </button>
               </div>
             </div>
